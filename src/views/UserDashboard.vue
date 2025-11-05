@@ -3,8 +3,7 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
       <!-- Header -->
       <div class="mb-8">
-        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Mein Dashboard</h1>
-        <p class="text-gray-600 dark:text-gray-300 mt-2">Willkommen zurück, {{ user?.name }}!</p>
+        <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Dashboard</h1>
       </div>
 
       <!-- Tabs -->
@@ -64,7 +63,7 @@
                   getStatusClass(event.status)
                 ]"
               >
-                {{ event.status }}
+                {{ translateStatus(event.status) }}
               </span>
             </div>
 
@@ -216,7 +215,7 @@
             <div>
               <p class="text-sm text-gray-500 dark:text-gray-400">Status</p>
               <span :class="['px-2 py-1 text-xs font-semibold rounded', getStatusClass(eventStatus.status)]">
-                {{ eventStatus.status }}
+                {{ translateStatus(eventStatus.status) }}
               </span>
             </div>
           </div>
@@ -500,6 +499,16 @@ const getStatusClass = (status) => {
     'Closed': 'bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-300'
   }
   return classes[status] || 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300'
+}
+
+const translateStatus = (status) => {
+  const translations = {
+    'Draft': 'Entwurf',
+    'Open': 'Offen',
+    'Assigned': 'Zugeteilt',
+    'Closed': 'Geschlossen'
+  }
+  return translations[status] || status
 }
 </script>
 

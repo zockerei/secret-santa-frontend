@@ -4,7 +4,6 @@
       <!-- Header -->
       <div class="mb-8">
         <h1 class="text-3xl font-bold text-gray-900 dark:text-white">Admin Dashboard</h1>
-        <p class="text-gray-600 dark:text-gray-300 mt-2">Manage users, events, and assignments</p>
       </div>
 
       <!-- Tabs -->
@@ -855,8 +854,8 @@ const submitManualAssignment = async () => {
     
     // Convert to the format expected by the API
     const assignments = Object.entries(manualAssignments.value).map(([gifter_id, recipient_id]) => ({
-      gifter_id: parseInt(gifter_id),
-      recipient_id: parseInt(recipient_id)
+      gifter_user_id: parseInt(gifter_id),
+      recipient_user_id: parseInt(recipient_id)
     }))
     
     await adminAPI.assignManual(manualAssignmentEvent.value.id, assignments)

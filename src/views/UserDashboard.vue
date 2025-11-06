@@ -181,27 +181,46 @@
         </div>
 
         <div v-else class="space-y-4">
+          <!-- Archived Events List -->
           <div
             v-for="assignment in archivedAssignments"
             :key="assignment.event_id"
-            class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border-l-4 border-gray-400 dark:border-gray-600"
+            class="bg-white dark:bg-gray-800 rounded-lg shadow-lg border-l-4 border-gray-400 dark:border-gray-600"
           >
-            <div class="flex justify-between items-start mb-4">
-              <div>
-                <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ assignment.event_name }}</h3>
-                <p class="text-sm text-gray-500 dark:text-gray-400">{{ formatDate(assignment.event_date) }}</p>
+            <!-- Collapsible Header -->
+            <button
+              @click="toggleArchiveEvent(assignment.event_id)"
+              class="w-full flex items-center justify-between p-6 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition rounded-lg"
+            >
+              <div class="flex-1">
+                <div class="flex items-start justify-between mb-2">
+                  <div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ assignment.event_name }}</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ formatDate(assignment.event_date) }}</p>
+                  </div>
+                  <span class="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 text-xs font-semibold rounded">
+                    Abgeschlossen
+                  </span>
+                </div>
+                <p class="text-sm text-gray-600 dark:text-gray-400 mt-1">
+                  <span class="font-medium">Wichtel für:</span> {{ assignment.recipient_name }}
+                </p>
               </div>
-              <span class="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 text-xs font-semibold rounded">
-                Abgeschlossen
-              </span>
-            </div>
+              <svg
+                :class="[
+                  'w-6 h-6 text-gray-500 dark:text-gray-400 transition-transform duration-200 ml-4 flex-shrink-0',
+                  expandedArchiveEvents.has(assignment.event_id) ? 'rotate-180' : ''
+                ]"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
 
-            <!-- Your Assignment -->
-            <div class="bg-gradient-to-r from-red-50 to-green-50 dark:from-red-900/40 dark:to-green-900/40 p-5 rounded-lg mb-4 border border-red-100 dark:border-red-800">
-              <p class="text-sm text-gray-600 dark:text-gray-300 mb-2 font-medium">🎅 Du warst der Wichtel für:</p>
-              <p class="text-2xl font-bold text-red-600 dark:text-red-400">{{ assignment.recipient_name }}</p>
-            </div>
-
+            <!-- Expandable Details -->
+            <div v-show="expandedArchiveEvents.has(assignment.event_id)" class="px-6 pb-6 space-y-4">
             <!-- Recipient's Wishlist -->
             <div v-if="assignment.recipient_message" class="bg-yellow-50 dark:bg-yellow-900/40 border-l-4 border-yellow-400 dark:border-yellow-500 p-4 rounded mb-4">
               <p class="text-sm font-medium text-yellow-800 dark:text-yellow-300 mb-2">💝 Deren Wunschliste:</p>
@@ -215,6 +234,7 @@
             <div v-if="assignment.my_message" class="bg-blue-50 dark:bg-blue-900/40 border-l-4 border-blue-400 dark:border-blue-500 p-4 rounded">
               <p class="text-sm font-medium text-blue-800 dark:text-blue-300 mb-2">📝 Deine Wunschliste war:</p>
               <p class="text-gray-700 dark:text-gray-200 leading-relaxed whitespace-pre-wrap">{{ assignment.my_message }}</p>
+            </div>
             </div>
           </div>
         </div>
@@ -455,6 +475,21 @@ const currentEventId = ref(null)
 const showLeaveModal = ref(false)
 const leaveError = ref('')
 const leaveLoading = ref(false)
+
+// Archive collapse state - track each event individually
+const expandedArchiveEvents = ref(new Set())
+
+const toggleArchiveEvent = (eventId) => {
+  if (expandedArchiveEvents.value.has(eventId)) {
+    expandedArchiveEvents.value.delete(eventId)
+  } else {
+    expandedArchiveEvents.value.add(eventId)
+  }
+}
+
+const isArchiveEventExpanded = (eventId) => {
+  return expandedArchiveEvents.value.has(eventId)
+}
 
 onMounted(() => {
   loadEvents()

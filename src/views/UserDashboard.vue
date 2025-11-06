@@ -8,7 +8,7 @@
 
       <!-- Tabs -->
       <div class="border-b border-gray-200 dark:border-gray-700 mb-6">
-        <nav class="-mb-px flex space-x-8">
+        <nav class="-mb-px flex space-x-8 overflow-x-auto">
           <button
             @click="activeTab = 'events'"
             :class="[
@@ -30,6 +30,17 @@
             ]"
           >
             Meine Zuteilungen
+          </button>
+          <button
+            @click="activeTab = 'archive'"
+            :class="[
+              'whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors',
+              activeTab === 'archive'
+                ? 'border-red-500 text-red-600 dark:text-red-400'
+                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-gray-600'
+            ]"
+          >
+            Archiv
           </button>
         </nav>
       </div>
@@ -119,15 +130,15 @@
           <p class="text-gray-500 dark:text-gray-400">Lade Zuteilungen...</p>
         </div>
 
-        <div v-else-if="assignments.length === 0" class="text-center py-12 bg-white dark:bg-gray-800 rounded-lg shadow">
+        <div v-else-if="activeAssignments.length === 0" class="text-center py-12 bg-white dark:bg-gray-800 rounded-lg shadow">
           <div class="text-5xl mb-4">🎁</div>
-          <p class="text-gray-500 dark:text-gray-300">Noch keine Zuteilungen.</p>
+          <p class="text-gray-500 dark:text-gray-300">Noch keine aktiven Zuteilungen.</p>
           <p class="text-sm text-gray-400 dark:text-gray-500 mt-2">Tritt einer Veranstaltung bei und warte, bis der Admin die Wichtel zuteilt!</p>
         </div>
 
         <div v-else class="space-y-4">
           <div
-            v-for="assignment in assignments"
+            v-for="assignment in activeAssignments"
             :key="assignment.event_id"
             class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border-l-4 border-red-500 dark:border-red-400"
           >
@@ -148,10 +159,62 @@
 
             <div v-if="assignment.recipient_message" class="bg-yellow-50 dark:bg-yellow-900/40 border-l-4 border-yellow-400 dark:border-yellow-500 p-4 rounded">
               <p class="text-sm font-medium text-yellow-800 dark:text-yellow-300 mb-2">💝 Wunschliste:</p>
-              <p class="text-gray-700 dark:text-gray-200 leading-relaxed">{{ assignment.recipient_message }}</p>
+              <p class="text-gray-700 dark:text-gray-200 leading-relaxed whitespace-pre-wrap">{{ assignment.recipient_message }}</p>
             </div>
             <div v-else class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded border border-gray-200 dark:border-gray-600">
               <p class="text-sm text-gray-500 dark:text-gray-400 italic">Keine Wunschliste angegeben</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Archive Tab -->
+      <div v-if="activeTab === 'archive'" class="space-y-6">
+        <div v-if="loading" class="text-center py-12">
+          <p class="text-gray-500 dark:text-gray-400">Lade Archiv...</p>
+        </div>
+
+        <div v-else-if="archivedAssignments.length === 0" class="text-center py-12 bg-white dark:bg-gray-800 rounded-lg shadow">
+          <div class="text-5xl mb-4">📦</div>
+          <p class="text-gray-500 dark:text-gray-300">Keine archivierten Veranstaltungen.</p>
+          <p class="text-sm text-gray-400 dark:text-gray-500 mt-2">Abgeschlossene Veranstaltungen werden hier angezeigt.</p>
+        </div>
+
+        <div v-else class="space-y-4">
+          <div
+            v-for="assignment in archivedAssignments"
+            :key="assignment.event_id"
+            class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 border-l-4 border-gray-400 dark:border-gray-600"
+          >
+            <div class="flex justify-between items-start mb-4">
+              <div>
+                <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ assignment.event_name }}</h3>
+                <p class="text-sm text-gray-500 dark:text-gray-400">{{ formatDate(assignment.event_date) }}</p>
+              </div>
+              <span class="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 text-xs font-semibold rounded">
+                Abgeschlossen
+              </span>
+            </div>
+
+            <!-- Your Assignment -->
+            <div class="bg-gradient-to-r from-red-50 to-green-50 dark:from-red-900/40 dark:to-green-900/40 p-5 rounded-lg mb-4 border border-red-100 dark:border-red-800">
+              <p class="text-sm text-gray-600 dark:text-gray-300 mb-2 font-medium">🎅 Du warst der Wichtel für:</p>
+              <p class="text-2xl font-bold text-red-600 dark:text-red-400">{{ assignment.recipient_name }}</p>
+            </div>
+
+            <!-- Recipient's Wishlist -->
+            <div v-if="assignment.recipient_message" class="bg-yellow-50 dark:bg-yellow-900/40 border-l-4 border-yellow-400 dark:border-yellow-500 p-4 rounded mb-4">
+              <p class="text-sm font-medium text-yellow-800 dark:text-yellow-300 mb-2">💝 Deren Wunschliste:</p>
+              <p class="text-gray-700 dark:text-gray-200 leading-relaxed whitespace-pre-wrap">{{ assignment.recipient_message }}</p>
+            </div>
+            <div v-else class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded border border-gray-200 dark:border-gray-600 mb-4">
+              <p class="text-sm text-gray-500 dark:text-gray-400 italic">Keine Wunschliste angegeben</p>
+            </div>
+
+            <!-- Your Own Wishlist -->
+            <div v-if="assignment.my_message" class="bg-blue-50 dark:bg-blue-900/40 border-l-4 border-blue-400 dark:border-blue-500 p-4 rounded">
+              <p class="text-sm font-medium text-blue-800 dark:text-blue-300 mb-2">📝 Deine Wunschliste war:</p>
+              <p class="text-gray-700 dark:text-gray-200 leading-relaxed whitespace-pre-wrap">{{ assignment.my_message }}</p>
             </div>
           </div>
         </div>
@@ -203,7 +266,7 @@
     </Modal>
 
     <!-- Event Status Modal -->
-    <Modal v-if="showStatusModal && eventStatus" @close="showStatusModal = false">
+    <Modal v-if="showStatusModal && eventStatus" @close="showStatusModal = false" size="large">
       <template #title>{{ eventStatus.event_name }}</template>
       <template #content>
         <div class="space-y-4">
@@ -236,10 +299,30 @@
             </div>
 
             <div v-if="eventStatus.is_participant">
-              <p class="text-sm text-gray-600 dark:text-gray-300 mt-2">
+              <p class="text-sm text-gray-600 dark:text-gray-300 mt-2 mb-3">
                 <span v-if="eventStatus.has_message" class="text-green-600 dark:text-green-400">✓ Wunschliste hinzugefügt</span>
                 <span v-else class="text-orange-600 dark:text-orange-400">⚠ Noch keine Wunschliste</span>
               </p>
+
+              <!-- Show user's own message if they have one -->
+              <div v-if="eventStatus.message" class="bg-blue-50 dark:bg-blue-900/40 border-l-4 border-blue-400 dark:border-blue-500 p-4 rounded mt-3">
+                <p class="text-sm font-medium text-blue-800 dark:text-blue-300 mb-2">📝 Deine Wunschliste:</p>
+                <p class="text-gray-700 dark:text-gray-200 leading-relaxed whitespace-pre-wrap">{{ eventStatus.message }}</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Show assignment info for closed events -->
+          <div v-if="eventStatus.is_participant && eventStatus.status === 'Closed' && eventStatus.assignment" class="border-t border-gray-200 dark:border-gray-700 pt-4">
+            <div class="bg-gradient-to-r from-red-50 to-green-50 dark:from-red-900/40 dark:to-green-900/40 p-5 rounded-lg mb-4 border border-red-100 dark:border-red-800">
+              <p class="text-sm text-gray-600 dark:text-gray-300 mb-2 font-medium">🎅 Du warst der Wichtel für:</p>
+              <p class="text-2xl font-bold text-red-600 dark:text-red-400">{{ eventStatus.assignment.recipient_name }}</p>
+            </div>
+
+            <!-- Recipient's wishlist -->
+            <div v-if="eventStatus.assignment.recipient_message" class="bg-yellow-50 dark:bg-yellow-900/40 border-l-4 border-yellow-400 dark:border-yellow-500 p-4 rounded">
+              <p class="text-sm font-medium text-yellow-800 dark:text-yellow-300 mb-2">💝 Deren Wunschliste:</p>
+              <p class="text-gray-700 dark:text-gray-200 leading-relaxed whitespace-pre-wrap">{{ eventStatus.assignment.recipient_message }}</p>
             </div>
           </div>
         </div>
@@ -340,6 +423,15 @@ const activeTab = ref('events')
 const loading = ref(false)
 const events = ref([])
 const assignments = ref([])
+
+// Computed properties for filtering assignments
+const activeAssignments = computed(() => {
+  return assignments.value.filter(a => a.event_status === 'Assigned')
+})
+
+const archivedAssignments = computed(() => {
+  return assignments.value.filter(a => a.event_status === 'Closed')
+})
 
 // Join event
 const showJoinModal = ref(false)

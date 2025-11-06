@@ -580,7 +580,7 @@
                   >
                     <option value="">-- Select recipient --</option>
                     <option
-                      v-for="recipient in manualAssignmentEvent.participants.filter(p => p.user_id !== participant.user_id)"
+                      v-for="recipient in getAvailableRecipients(participant.user_id)"
                       :key="recipient.user_id"
                       :value="recipient.user_id"
                     >
@@ -692,6 +692,19 @@ const availableUsers = computed(() => {
   const participantIds = selectedEvent.value.participants.map(p => p.user_id)
   return users.value.filter(u => !participantIds.includes(u.id))
 })
+
+const getAvailableRecipients = (gifterId) => {
+  if (!manualAssignmentEvent.value?.participants) return []
+  
+  const assignedRecipients = Object.entries(manualAssignments.value)
+    .filter(([id]) => parseInt(id) !== gifterId)
+    .map(([, recipientId]) => parseInt(recipientId))
+    .filter(id => id)
+  
+  return manualAssignmentEvent.value.participants.filter(
+    p => p.user_id !== gifterId && !assignedRecipients.includes(p.user_id)
+  )
+}
 
 onMounted(() => {
   loadEvents()

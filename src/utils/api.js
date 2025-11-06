@@ -73,10 +73,15 @@ api.interceptors.response.use(
     
     // Handle 401 Unauthorized
     if (error.response?.status === 401) {
-      console.warn('🔒 Token expired or invalid - redirecting to login')
-      localStorage.removeItem('token')
-      localStorage.removeItem('user')
-      window.location.href = '/login'
+      const isAuthEndpoint = error.config?.url?.includes('/auth/login') || 
+                            error.config?.url?.includes('/auth/register')
+      
+      if (!isAuthEndpoint) {
+        console.warn('🔒 Token expired or invalid - redirecting to login')
+        localStorage.removeItem('token')
+        localStorage.removeItem('user')
+        window.location.href = '/login'
+      }
     }
     
     return Promise.reject(error)

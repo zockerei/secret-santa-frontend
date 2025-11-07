@@ -91,12 +91,18 @@
                 Details
               </button>
               <button
+                @click="editEvent(event)"
+                class="text-sm px-3 py-1 bg-yellow-50 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400 rounded hover:bg-yellow-100 dark:hover:bg-yellow-900/50 transition"
+              >
+                Edit
+              </button>
+              <button
                 v-if="event.status === 'Draft' || event.status === 'Open'"
-                @click="assignEvent(event.id)"
+                @click="openAssignmentOptions(event.id)"
                 :disabled="event.participant_count < 2"
                 class="text-sm px-3 py-1 bg-green-50 dark:bg-green-900/30 text-green-600 dark:text-green-400 rounded hover:bg-green-100 dark:hover:bg-green-900/50 transition disabled:opacity-50 disabled:cursor-not-allowed"
               >
-                Auto Assign
+                Assign
               </button>
               <button
                 v-if="event.status === 'Draft' || event.status === 'Open'"
@@ -213,10 +219,10 @@
     </div>
 
     <!-- Create Event Modal -->
-    <Modal v-if="showCreateEventModal" @close="showCreateEventModal = false">
-      <template #title>Create New Event</template>
+    <Modal v-if="showCreateEventModal" @close="closeEventModal">
+      <template #title>{{ editingEvent ? 'Edit Event' : 'Create New Event' }}</template>
       <template #content>
-        <form @submit.prevent="createEvent" class="space-y-4">
+        <form @submit.prevent="saveEvent" class="space-y-4">
           <div>
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">Event Name</label>
             <input
@@ -242,7 +248,7 @@
           <div class="flex justify-end gap-2">
             <button
               type="button"
-              @click="showCreateEventModal = false"
+              @click="closeEventModal"
               class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
             >
               Cancel
@@ -252,7 +258,7 @@
               :disabled="eventLoading"
               class="px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50 transition"
             >
-              {{ eventLoading ? 'Creating...' : 'Create' }}
+              {{ eventLoading ? 'Saving...' : (editingEvent ? 'Save' : 'Create') }}
             </button>
           </div>
         </form>
@@ -328,7 +334,17 @@
 
     <!-- Event Details Modal -->
     <Modal v-if="showEventDetailsModal && selectedEvent" @close="showEventDetailsModal = false" size="large">
-      <template #title>{{ selectedEvent.event_name }} - Details</template>
+      <template #title>
+        <div class="flex items-center justify-between">
+          <span>{{ selectedEvent.event_name }} - Details</span>
+          <button
+            @click="editEventFromDetails"
+            class="text-sm px-3 py-1 bg-yellow-50 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400 rounded hover:bg-yellow-100 dark:hover:bg-yellow-900/50 transition"
+          >
+            Edit Event
+          </button>
+        </div>
+      </template>
       <template #content>
         <div class="space-y-6">
           <!-- Event Info -->
@@ -621,6 +637,98 @@
         </div>
       </template>
     </Modal>
+
+    <!-- Assignment Options Modal -->
+    <Modal v-if="showAssignmentOptionsModal" @close="showAssignmentOptionsModal = false" size="large">
+      <template #title>Assignment Options</template>
+      <template #content>
+        <div class="space-y-4">
+          <p class="text-sm text-gray-600 dark:text-gray-300">
+            Choose which previous events to consider to avoid repeat assignments.
+          </p>
+
+          <div v-if="loadingMatchingEvents" class="text-center py-4">
+            <p class="text-gray-500 dark:text-gray-400">Loading matching events...</p>
+          </div>
+
+          <div v-else>
+            <div v-if="matchingEvents.length > 0" class="space-y-3">
+              <p class="text-sm font-medium text-gray-700 dark:text-gray-300">
+                Found {{ matchingEvents.length }} event(s) with the same participants:
+              </p>
+              
+              <div class="space-y-2 max-h-60 overflow-y-auto border border-gray-200 dark:border-gray-700 rounded-lg p-3">
+                <label class="flex items-start gap-3 p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded cursor-pointer">
+                  <input
+                    type="checkbox"
+                    :checked="selectedHistoryEvents.length === 0"
+                    @change="selectedHistoryEvents = []"
+                    class="mt-1"
+                  />
+                  <div class="flex-1">
+                    <p class="font-medium text-gray-900 dark:text-white">No history checking (fresh start)</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">Ignore all previous assignments</p>
+                  </div>
+                </label>
+
+                <div class="border-t border-gray-200 dark:border-gray-700 my-2"></div>
+
+                <label
+                  v-for="event in matchingEvents"
+                  :key="event.event_id"
+                  class="flex items-start gap-3 p-2 hover:bg-gray-50 dark:hover:bg-gray-700 rounded cursor-pointer"
+                >
+                  <input
+                    type="checkbox"
+                    :value="event.event_id"
+                    v-model="selectedHistoryEvents"
+                    class="mt-1"
+                  />
+                  <div class="flex-1">
+                    <p class="font-medium text-gray-900 dark:text-white">{{ event.event_name }}</p>
+                    <p class="text-xs text-gray-500 dark:text-gray-400">
+                      {{ formatDate(event.event_date) }} • {{ event.status }}
+                    </p>
+                  </div>
+                </label>
+              </div>
+
+              <div class="bg-blue-50 dark:bg-blue-900/30 p-3 rounded-md">
+                <p class="text-sm text-blue-800 dark:text-blue-300">
+                  <strong>Note:</strong> Selected events will be used to avoid repeat gifting assignments.
+                  {{ selectedHistoryEvents.length === 0 ? 'Currently no history checking.' : `Checking against ${selectedHistoryEvents.length} event(s).` }}
+                </p>
+              </div>
+            </div>
+
+            <div v-else class="text-center py-4 bg-gray-50 dark:bg-gray-700 rounded-lg">
+              <p class="text-gray-600 dark:text-gray-300">No previous events found with the same participants.</p>
+              <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">This will be a fresh assignment.</p>
+            </div>
+          </div>
+
+          <div v-if="assignmentError" class="p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-md">
+            <p class="text-sm text-red-600 dark:text-red-400">{{ assignmentError }}</p>
+          </div>
+
+          <div class="flex justify-end gap-2 pt-4 border-t border-gray-200 dark:border-gray-700">
+            <button
+              @click="showAssignmentOptionsModal = false"
+              class="px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+            >
+              Cancel
+            </button>
+            <button
+              @click="performAssignment"
+              :disabled="assignmentLoading"
+              class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 disabled:opacity-50 transition"
+            >
+              {{ assignmentLoading ? 'Assigning...' : 'Assign Now' }}
+            </button>
+          </div>
+        </div>
+      </template>
+    </Modal>
  
   </div>
 </template>
@@ -642,6 +750,7 @@ const selectedEvent = ref(null)
 // Event modals
 const showCreateEventModal = ref(false)
 const showEventDetailsModal = ref(false)
+const editingEvent = ref(null)
 const eventError = ref('')
 const eventLoading = ref(false)
 const newEvent = ref({
@@ -679,6 +788,15 @@ const manualAssignmentEvent = ref(null)
 const manualAssignments = ref({})
 const manualAssignmentError = ref('')
 const manualAssignmentLoading = ref(false)
+
+// Assignment options modal
+const showAssignmentOptionsModal = ref(false)
+const assignmentEventId = ref(null)
+const matchingEvents = ref([])
+const selectedHistoryEvents = ref([])
+const loadingMatchingEvents = ref(false)
+const assignmentError = ref('')
+const assignmentLoading = ref(false)
 
 // Edit message modal
 const showEditMessageModal = ref(false)
@@ -733,23 +851,52 @@ const loadUsers = async () => {
   }
 }
 
-const createEvent = async () => {
+const saveEvent = async () => {
   try {
     eventLoading.value = true
     eventError.value = ''
-    await adminAPI.createEvent({
+    
+    const eventData = {
       event_name: newEvent.value.event_name,
       date: new Date(newEvent.value.date).toISOString()
-    })
-    showCreateEventModal.value = false
-    newEvent.value = { event_name: '', date: '' }
+    }
+    
+    if (editingEvent.value) {
+      await adminAPI.updateEvent(editingEvent.value.id, eventData)
+      showToast('Event updated successfully!', 'success')
+    } else {
+      await adminAPI.createEvent(eventData)
+      showToast('Event created successfully!', 'success')
+    }
+    
+    closeEventModal()
     loadEvents()
-    showToast('Event created successfully!', 'success')
   } catch (error) {
-    eventError.value = error.response?.data?.detail || 'Failed to create event'
+    eventError.value = error.response?.data?.detail || 'Failed to save event'
   } finally {
     eventLoading.value = false
   }
+}
+
+const editEvent = (event) => {
+  editingEvent.value = event
+  newEvent.value = {
+    event_name: event.event_name,
+    date: event.date.split('T')[0] // Convert ISO date to YYYY-MM-DD for input
+  }
+  showCreateEventModal.value = true
+}
+
+const editEventFromDetails = () => {
+  editEvent(selectedEvent.value)
+  showEventDetailsModal.value = false
+}
+
+const closeEventModal = () => {
+  showCreateEventModal.value = false
+  editingEvent.value = null
+  newEvent.value = { event_name: '', date: '' }
+  eventError.value = ''
 }
 
 const saveUser = async () => {
@@ -809,6 +956,44 @@ const viewEventDetails = async (eventId) => {
     showEventDetailsModal.value = true
   } catch (error) {
     console.error('Failed to load event details:', error)
+  }
+}
+
+const openAssignmentOptions = async (eventId) => {
+  try {
+    assignmentEventId.value = eventId
+    loadingMatchingEvents.value = true
+    assignmentError.value = ''
+    selectedHistoryEvents.value = []
+    showAssignmentOptionsModal.value = true
+    
+    const response = await adminAPI.getMatchingParticipantEvents(eventId)
+    matchingEvents.value = response.matching_events || []
+  } catch (error) {
+    assignmentError.value = 'Failed to load matching events'
+    matchingEvents.value = []
+  } finally {
+    loadingMatchingEvents.value = false
+  }
+}
+
+const performAssignment = async () => {
+  try {
+    assignmentLoading.value = true
+    assignmentError.value = ''
+    
+    const historyEventIds = selectedHistoryEvents.value.length > 0 
+      ? selectedHistoryEvents.value 
+      : []
+    
+    await adminAPI.assignEvent(assignmentEventId.value, historyEventIds)
+    showAssignmentOptionsModal.value = false
+    loadEvents()
+    showToast('Secret Santa pairs assigned successfully!', 'success')
+  } catch (error) {
+    assignmentError.value = error.response?.data?.detail || 'Failed to assign Secret Santa pairs'
+  } finally {
+    assignmentLoading.value = false
   }
 }
 

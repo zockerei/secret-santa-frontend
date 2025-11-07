@@ -194,8 +194,10 @@ export const adminAPI = {
   },
   
   // Event Actions
-  assignEvent: async (eventId) => {
-    const response = await api.post(`/admin/events/${eventId}/assign`)
+  assignEvent: async (eventId, historyEventIds = null) => {
+    const response = await api.post(`/admin/events/${eventId}/assign`, {
+      history_event_ids: historyEventIds
+    })
     return response.data
   },
   
@@ -221,6 +223,11 @@ export const adminAPI = {
   
   getAssignmentHistory: async (eventId) => {
     const response = await api.get(`/admin/events/${eventId}/history`)
+    return response.data
+  },
+  
+  getMatchingParticipantEvents: async (eventId) => {
+    const response = await api.get(`/admin/events/${eventId}/matching-participant-events`)
     return response.data
   },
   

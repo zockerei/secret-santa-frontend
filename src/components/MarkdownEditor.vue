@@ -110,7 +110,7 @@ const renderedMarkdown = computed(() => {
 })
 </script>
 
-<style scoped>
+<style scoped lang="postcss">
 /* Add some basic styling for the markdown preview */
 .markdown-preview :deep(h1) {
   @apply text-2xl font-bold mt-4 mb-2 text-gray-900 dark:text-white;

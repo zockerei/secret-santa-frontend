@@ -512,12 +512,11 @@
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Wishlist / Message
             </label>
-            <textarea
+            <MarkdownEditor
               v-model="participantMessage"
-              rows="15"
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              :rows="15"
               placeholder="Enter wishlist or message for this participant..."
-            ></textarea>
+            />
             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
               This will be visible to the person who is assigned to give a gift to {{ editingParticipant.user_name }}.
             </p>
@@ -738,6 +737,7 @@ import { ref, computed, onMounted } from 'vue'
 import { adminAPI } from '../utils/api'
 import { useToast } from '../composables/useToast'
 import Modal from '../components/Modal.vue'
+import MarkdownEditor from '../components/MarkdownEditor.vue'
 
 const { toasts, showToast } = useToast()
 

@@ -159,7 +159,7 @@
 
             <div v-if="assignment.recipient_message" class="bg-yellow-50 dark:bg-yellow-900/40 border-l-4 border-yellow-400 dark:border-yellow-500 p-4 rounded">
               <p class="text-sm font-medium text-yellow-800 dark:text-yellow-300 mb-2">💝 Wunschliste:</p>
-              <p class="text-gray-700 dark:text-gray-200 leading-relaxed whitespace-pre-wrap">{{ assignment.recipient_message }}</p>
+              <MarkdownRenderer :content="assignment.recipient_message" class="text-gray-700 dark:text-gray-200" />
             </div>
             <div v-else class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded border border-gray-200 dark:border-gray-600">
               <p class="text-sm text-gray-500 dark:text-gray-400 italic">Keine Wunschliste angegeben</p>
@@ -224,7 +224,7 @@
             <!-- Recipient's Wishlist -->
             <div v-if="assignment.recipient_message" class="bg-yellow-50 dark:bg-yellow-900/40 border-l-4 border-yellow-400 dark:border-yellow-500 p-4 rounded mb-4">
               <p class="text-sm font-medium text-yellow-800 dark:text-yellow-300 mb-2">💝 Deren Wunschliste:</p>
-              <p class="text-gray-700 dark:text-gray-200 leading-relaxed whitespace-pre-wrap">{{ assignment.recipient_message }}</p>
+              <MarkdownRenderer :content="assignment.recipient_message" class="text-gray-700 dark:text-gray-200" />
             </div>
             <div v-else class="bg-gray-50 dark:bg-gray-700/50 p-4 rounded border border-gray-200 dark:border-gray-600 mb-4">
               <p class="text-sm text-gray-500 dark:text-gray-400 italic">Keine Wunschliste angegeben</p>
@@ -233,7 +233,7 @@
             <!-- Your Own Wishlist -->
             <div v-if="assignment.my_message" class="bg-blue-50 dark:bg-blue-900/40 border-l-4 border-blue-400 dark:border-blue-500 p-4 rounded">
               <p class="text-sm font-medium text-blue-800 dark:text-blue-300 mb-2">📝 Deine Wunschliste war:</p>
-              <p class="text-gray-700 dark:text-gray-200 leading-relaxed whitespace-pre-wrap">{{ assignment.my_message }}</p>
+              <MarkdownRenderer :content="assignment.my_message" class="text-gray-700 dark:text-gray-200" />
             </div>
             </div>
           </div>
@@ -250,12 +250,11 @@
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Deine Wunschliste (Optional)
             </label>
-            <textarea
+            <MarkdownEditor
               v-model="joinMessage"
-              rows="15"
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+              :rows="15"
               placeholder="Teile deine Geschenkwünsche, Interessen oder Wunschliste..."
-            ></textarea>
+            />
             <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
               Das hilft deinem Wichtel, das perfekte Geschenk für dich auszuwählen!
             </p>
@@ -327,7 +326,7 @@
               <!-- Show user's own message if they have one -->
               <div v-if="eventStatus.message" class="bg-blue-50 dark:bg-blue-900/40 border-l-4 border-blue-400 dark:border-blue-500 p-4 rounded mt-3">
                 <p class="text-sm font-medium text-blue-800 dark:text-blue-300 mb-2">📝 Deine Wunschliste:</p>
-                <p class="text-gray-700 dark:text-gray-200 leading-relaxed whitespace-pre-wrap">{{ eventStatus.message }}</p>
+                <MarkdownRenderer :content="eventStatus.message" class="text-gray-700 dark:text-gray-200" />
               </div>
             </div>
           </div>
@@ -342,7 +341,7 @@
             <!-- Recipient's wishlist -->
             <div v-if="eventStatus.assignment.recipient_message" class="bg-yellow-50 dark:bg-yellow-900/40 border-l-4 border-yellow-400 dark:border-yellow-500 p-4 rounded">
               <p class="text-sm font-medium text-yellow-800 dark:text-yellow-300 mb-2">💝 Deren Wunschliste:</p>
-              <p class="text-gray-700 dark:text-gray-200 leading-relaxed whitespace-pre-wrap">{{ eventStatus.assignment.recipient_message }}</p>
+              <MarkdownRenderer :content="eventStatus.assignment.recipient_message" class="text-gray-700 dark:text-gray-200" />
             </div>
           </div>
         </div>
@@ -358,13 +357,12 @@
             <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
               Deine Wunschliste
             </label>
-            <textarea
+            <MarkdownEditor
               v-model="updateMessage"
-              rows="15"
-              required
-              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+              :rows="15"
+              :required="true"
               placeholder="Teile deine Geschenkwünsche, Interessen oder Wunschliste..."
-            ></textarea>
+            />
           </div>
 
           <div v-if="updateError" class="p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-md">
@@ -435,6 +433,8 @@ import { userAPI } from '../utils/api'
 import { useAuth } from '../composables/useAuth'
 import { useToast } from '../composables/useToast'
 import Modal from '../components/Modal.vue'
+import MarkdownEditor from '../components/MarkdownEditor.vue'
+import MarkdownRenderer from '../components/MarkdownRenderer.vue'
 
 const { user } = useAuth()
 const { showToast } = useToast()

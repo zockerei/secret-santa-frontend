@@ -102,7 +102,7 @@ const handleLogin = async () => {
       error.value = detail || `Login failed: ${err.response.status} ${err.response.statusText}`
     } else if (err.request) {
       // No response from backend
-      error.value = 'Cannot connect to server. Is the backend running on http://localhost:8000?'
+      error.value = 'Cannot connect to server'
     } else {
       error.value = err.message || 'Login failed. Please try again.'
     }

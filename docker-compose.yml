@@ -1,0 +1,36 @@
+services:
+  frontend:
+    container_name: secret-santa-frontend
+    restart: unless-stopped
+    
+    image: ghcr.io/zockerei/secret-santa-frontend:main
+    pull_policy: always
+    
+    environment:
+      - VITE_API_URL=${VITE_API_URL}
+      - VITE_APP_NAME=${VITE_APP_NAME:-Secret Santa}
+    
+    networks:
+      br0:
+        ipv4_address: ${FRONTEND_IP}
+    
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 10s
+    
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "10m"
+        max-file: "3"
+    
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+networks:
+  br0:
+    external: true
+

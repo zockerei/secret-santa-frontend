@@ -1,12 +1,7 @@
 import axios from 'axios'
 
-// API Base URL - change this if your backend is on a different URL/port
 const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000'
 
-// Log the API URL on startup so you can verify it's correct
-console.log('🌐 API Base URL:', API_BASE_URL)
-
-// Create axios instance with base configuration
 const api = axios.create({
   baseURL: API_BASE_URL,
   headers: {
@@ -14,19 +9,12 @@ const api = axios.create({
   }
 })
 
-// Request interceptor to add JWT token to headers
 api.interceptors.request.use(
   (config) => {
     const token = localStorage.getItem('token')
     if (token) {
       config.headers.Authorization = `Bearer ${token}`
     }
-    
-    // Log outgoing requests for debugging
-    console.log(`📤 ${config.method.toUpperCase()} ${config.baseURL}${config.url}`, {
-      headers: config.headers,
-      data: config.data
-    })
     
     return config
   },
@@ -36,20 +24,12 @@ api.interceptors.request.use(
   }
 )
 
-// Response interceptor to handle errors
 api.interceptors.response.use(
   (response) => {
-    // Log successful responses
-    console.log(`✅ ${response.config.method.toUpperCase()} ${response.config.url}`, {
-      status: response.status,
-      data: response.data
-    })
     return response
   },
   (error) => {
-    // Enhanced error logging
     if (error.response) {
-      // Server responded with error status
       console.error('❌ Response Error:', {
         status: error.response.status,
         statusText: error.response.statusText,
@@ -59,7 +39,6 @@ api.interceptors.response.use(
         headers: error.response.headers
       })
     } else if (error.request) {
-      // Request was made but no response received
       console.error('❌ Network Error - No response received:', {
         url: error.config?.url,
         method: error.config?.method?.toUpperCase(),
@@ -67,11 +46,9 @@ api.interceptors.response.use(
         error: error.message
       })
     } else {
-      // Something else happened
       console.error('❌ Error:', error.message)
     }
     
-    // Handle 401 Unauthorized
     if (error.response?.status === 401) {
       const isAuthEndpoint = error.config?.url?.includes('/auth/login') || 
                             error.config?.url?.includes('/auth/register')

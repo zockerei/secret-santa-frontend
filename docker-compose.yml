@@ -6,10 +6,6 @@ services:
     image: ghcr.io/zockerei/secret-santa-frontend:main
     pull_policy: always
     
-    environment:
-      - VITE_API_URL=${VITE_API_URL}
-      - VITE_APP_NAME=${VITE_APP_NAME:-Secret Santa}
-    
     networks:
       br0:
         ipv4_address: ${FRONTEND_IP}

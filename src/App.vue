@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
     <!-- Navigation Bar -->
-    <nav v-if="showNav" class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-40 transition-colors">
+    <nav class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-40 transition-colors">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
           <!-- Logo -->
@@ -115,7 +115,7 @@
     </nav>
     
     <!-- Christmas Lights hanging from navbar -->
-    <ul v-if="showNav" class="lightrope">
+    <ul class="lightrope">
       <li v-for="n in 42" :key="n"></li>
     </ul>
     
@@ -156,11 +156,6 @@ const { user, isAuthenticated, isAdmin, logout, initAuth, loadUser } = useAuth()
 const { toasts, showToast } = useToast()
 
 const mobileMenuOpen = ref(false)
-
-// Hide nav on login and register pages
-const showNav = computed(() => {
-  return !['Login', 'Register'].includes(route.name)
-})
 
 const handleLogout = () => {
   logout()

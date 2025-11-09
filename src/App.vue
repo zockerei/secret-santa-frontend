@@ -230,23 +230,23 @@ onMounted(() => {
   height: 28px;
   border-radius: 50%;
   margin: 0 20px;
-  background: rgba(0, 247, 165, 1);
-  box-shadow: 0px 4.67px 24px 3px rgba(0, 247, 165, 1);
+  background: rgba(220, 38, 38, 1); /* Red */
+  box-shadow: 0px 4.67px 24px 3px rgba(220, 38, 38, 1);
   animation-name: flash-1;
   animation-duration: 2s;
   vertical-align: top;
 }
 
 .lightrope li:nth-child(2n+1) {
-  background: rgba(0, 255, 255, 1);
-  box-shadow: 0px 4.67px 24px 3px rgba(0, 255, 255, 0.5);
+  background: rgba(22, 163, 74, 1); /* Green */
+  box-shadow: 0px 4.67px 24px 3px rgba(22, 163, 74, 1);
   animation-name: flash-2;
   animation-duration: 0.4s;
 }
 
 .lightrope li:nth-child(4n+2) {
-  background: rgba(247, 0, 148, 1);
-  box-shadow: 0px 4.67px 24px 3px rgba(247, 0, 148, 1);
+  background: rgba(234, 179, 8, 1); /* Gold */
+  box-shadow: 0px 4.67px 24px 3px rgba(234, 179, 8, 1);
   animation-name: flash-3;
   animation-duration: 1.1s;
 }
@@ -291,34 +291,34 @@ onMounted(() => {
 
 @keyframes flash-1 {
   0%, 100% {
-    background: rgba(0, 247, 165, 1);
-    box-shadow: 0px 4.67px 24px 3px rgba(0, 247, 165, 1);
+    background: rgba(220, 38, 38, 1); /* Red */
+    box-shadow: 0px 4.67px 24px 3px rgba(220, 38, 38, 1);
   }
   50% {
-    background: rgba(0, 247, 165, 0.4);
-    box-shadow: 0px 4.67px 24px 3px rgba(0, 247, 165, 0.2);
+    background: rgba(220, 38, 38, 0.4);
+    box-shadow: 0px 4.67px 24px 3px rgba(220, 38, 38, 0.2);
   }
 }
 
 @keyframes flash-2 {
   0%, 100% {
-    background: rgba(0, 255, 255, 1);
-    box-shadow: 0px 4.67px 24px 3px rgba(0, 255, 255, 1);
+    background: rgba(22, 163, 74, 1); /* Green */
+    box-shadow: 0px 4.67px 24px 3px rgba(22, 163, 74, 1);
   }
   50% {
-    background: rgba(0, 255, 255, 0.4);
-    box-shadow: 0px 4.67px 24px 3px rgba(0, 255, 255, 0.2);
+    background: rgba(22, 163, 74, 0.4);
+    box-shadow: 0px 4.67px 24px 3px rgba(22, 163, 74, 0.2);
   }
 }
 
 @keyframes flash-3 {
   0%, 100% {
-    background: rgba(247, 0, 148, 1);
-    box-shadow: 0px 4.67px 24px 3px rgba(247, 0, 148, 1);
+    background: rgba(234, 179, 8, 1); /* Gold */
+    box-shadow: 0px 4.67px 24px 3px rgba(234, 179, 8, 1);
   }
   50% {
-    background: rgba(247, 0, 148, 0.4);
-    box-shadow: 0px 4.67px 24px 3px rgba(247, 0, 148, 0.2);
+    background: rgba(234, 179, 8, 0.4);
+    box-shadow: 0px 4.67px 24px 3px rgba(234, 179, 8, 0.2);
   }
 }
 </style>

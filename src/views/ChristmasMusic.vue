@@ -112,8 +112,10 @@ const params = {
   bloomRadius: 0.4,
 }
 
-const fftSize = 2048
-const totalPoints = 4000
+// Reduce complexity on mobile for better performance
+const isMobileDevice = typeof window !== 'undefined' && (window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent))
+const fftSize = isMobileDevice ? 1024 : 2048
+const totalPoints = isMobileDevice ? 2000 : 4000
 
 const listener = new THREE.AudioListener()
 const audio = new THREE.Audio(listener)
@@ -187,9 +189,14 @@ function initVisualization() {
   showOverlay.value = false
   isLoading.value = false
 
+  // Detect mobile device for performance optimization
+  const isMobile = window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+  
   scene = new THREE.Scene()
-  renderer = new THREE.WebGLRenderer({ antialias: true })
-  renderer.setPixelRatio(window.devicePixelRatio)
+  // Disable antialiasing on mobile for better performance
+  renderer = new THREE.WebGLRenderer({ antialias: !isMobile })
+  // Limit pixel ratio on mobile to improve performance
+  renderer.setPixelRatio(isMobile ? Math.min(window.devicePixelRatio, 1.5) : window.devicePixelRatio)
   renderer.setSize(window.innerWidth, window.innerHeight)
   
   const container = document.getElementById('christmas-music-container')
@@ -212,16 +219,24 @@ function initVisualization() {
     value: new THREE.DataTexture(analyser.data, fftSize / 2, 1, format),
   }
 
-  addPlane(scene, uniforms, 3000)
+  // Reduce scene complexity on mobile
+  const planePoints = isMobile ? 1500 : 3000
+  const treeCount = isMobile ? 5 : 10
+  
+  addPlane(scene, uniforms, planePoints)
   addSnow(scene, uniforms)
 
-  range(10).forEach((i) => {
+  range(treeCount).forEach((i) => {
     addTree(scene, uniforms, totalPoints, [20, 0, -20 * i])
     addTree(scene, uniforms, totalPoints, [-20, 0, -20 * i])
   })
 
   const renderScene = new RenderPass(scene, camera)
 
+  // Reduce bloom effect on mobile for better performance
+  const bloomStrength = isMobile ? 0.3 : params.bloomStrength
+  const bloomRadius = isMobile ? 0.2 : params.bloomRadius
+  
   const bloomPass = new UnrealBloomPass(
     new THREE.Vector2(window.innerWidth, window.innerHeight),
     1.5,
@@ -229,8 +244,8 @@ function initVisualization() {
     0.85
   )
   bloomPass.threshold = params.bloomThreshold
-  bloomPass.strength = params.bloomStrength
-  bloomPass.radius = params.bloomRadius
+  bloomPass.strength = bloomStrength
+  bloomPass.radius = bloomRadius
 
   composer = new EffectComposer(renderer)
   composer.addPass(renderScene)
@@ -405,7 +420,9 @@ function addSnow(scene, uniforms) {
   `
 
   function createSnowSet(sprite) {
-    const totalPoints = 300
+    // Reduce snow particles on mobile
+    const isMobile = window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    const totalPoints = isMobile ? 150 : 300
     const shaderMaterial = new THREE.ShaderMaterial({
       uniforms: {
         ...uniforms,

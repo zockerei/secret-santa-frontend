@@ -1,7 +1,7 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-b from-red-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900">
-    <!-- SVG Filters for Electric Border -->
-    <svg class="absolute w-0 h-0">
+  <div class="min-h-screen bg-gradient-to-b from-red-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-x-hidden" style="min-height: 100vh; min-height: 100dvh;">
+    <!-- SVG Filters for Electric Border - Disabled on mobile for performance -->
+    <svg class="absolute w-0 h-0" :class="{ 'mobile-hidden': true }">
       <defs>
         <filter id="electric-displace" colorInterpolationFilters="sRGB" x="-20%" y="-20%" width="140%" height="140%">
           <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise1" seed="1" />
@@ -181,6 +181,24 @@
   transform: scale(1.05);
 }
 
+/* Disable hover effects on mobile */
+@media (hover: none) and (pointer: coarse) {
+  .electric-card:hover {
+    transform: scale(1);
+  }
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .electric-card {
+    transition: none;
+  }
+  
+  .electric-card:hover {
+    transform: scale(1);
+  }
+}
+
 /* Inner Container */
 .electric-inner {
   position: relative;
@@ -203,6 +221,20 @@
   margin-left: -4px;
   filter: url(#electric-displace);
   background: white;
+}
+
+/* Disable heavy SVG filters on mobile for better performance */
+@media (max-width: 768px) {
+  .electric-main-border {
+    filter: none;
+  }
+}
+
+/* Disable animations for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .electric-main-border {
+    filter: none;
+  }
 }
 
 .dark .electric-main-border {
@@ -232,6 +264,19 @@
 .electric-glow-2 {
   filter: blur(4px);
   opacity: 0.8;
+}
+
+/* Reduce blur on mobile for better performance */
+@media (max-width: 768px) {
+  .electric-glow-1 {
+    filter: blur(0.5px);
+    opacity: 0.4;
+  }
+  
+  .electric-glow-2 {
+    filter: blur(2px);
+    opacity: 0.5;
+  }
 }
 
 /* Overlay Effects */
@@ -266,6 +311,14 @@
   opacity: 0.5;
 }
 
+/* Disable heavy overlay effects on mobile */
+@media (max-width: 768px) {
+  .electric-overlay-1,
+  .electric-overlay-2 {
+    display: none;
+  }
+}
+
 /* Background Glow */
 .electric-bg-glow {
   position: absolute;
@@ -281,6 +334,14 @@
   opacity: 0.3;
   z-index: -1;
   pointer-events: none;
+}
+
+/* Reduce or disable background glow on mobile */
+@media (max-width: 768px) {
+  .electric-bg-glow {
+    filter: blur(8px);
+    opacity: 0.2;
+  }
 }
 
 /* Content Container */
@@ -377,5 +438,12 @@
     transparent,
     rgb(22, 163, 74)
   );
+}
+
+/* Disable SVG filter animations on mobile and for reduced motion */
+@media (max-width: 768px), (prefers-reduced-motion: reduce) {
+  svg animate {
+    animation-play-state: paused !important;
+  }
 }
 </style>

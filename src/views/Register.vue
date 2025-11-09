@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center px-4 py-12 bg-gradient-to-br from-red-50 to-green-50 dark:from-gray-900 dark:to-gray-800">
+  <div class="min-h-screen flex items-center justify-center px-4 py-8 sm:py-12 bg-gradient-to-br from-red-50 to-green-50 dark:from-gray-900 dark:to-gray-800 overflow-x-hidden" style="min-height: 100vh; min-height: 100dvh;">
     <div class="max-w-md w-full">
       <div class="text-center mb-8">
         <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">🎄 Weihnachten</h1>

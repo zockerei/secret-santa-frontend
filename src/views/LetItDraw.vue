@@ -83,12 +83,14 @@ onMounted(() => {
     containerRef.value.addEventListener('mousemove', handleMouseMove)
   }
   
-  // Initialize particles.js
+  // Initialize particles.js with reduced particles on mobile
   if (window.particlesJS) {
+    const isMobile = window.innerWidth <= 768 || /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)
+    
     window.particlesJS("particles-js", {
       particles: {
         number: {
-          value: 52,
+          value: isMobile ? 26 : 52,
           density: {
             enable: true,
             value_area: 600
@@ -123,7 +125,7 @@ onMounted(() => {
         },
         move: {
           enable: true,
-          speed: 2,
+          speed: isMobile ? 1 : 2,
           direction: "bottom",
           random: false,
           straight: false,
@@ -221,6 +223,24 @@ onUnmounted(() => {
   z-index: 2;
   clip-path: circle(0px at var(--x, 0px) var(--y, 0px));
   will-change: clip-path;
+}
+
+/* Disable will-change on mobile to save memory */
+@media (max-width: 768px) {
+  .final-image {
+    will-change: auto;
+  }
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .final-image {
+    will-change: auto;
+  }
+  
+  .container:hover .final-image {
+    clip-path: circle(0px at var(--x, 0px) var(--y, 0px));
+  }
 }
 
 .container:hover .final-image {

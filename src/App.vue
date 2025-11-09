@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
+  <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors overflow-x-hidden">
     <!-- Navigation Bar -->
     <nav class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-40 transition-colors">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -211,6 +211,7 @@ onMounted(() => {
   list-style: none;
   height: 0;
   line-height: 0;
+  max-width: 100vw;
 }
 
 .lightrope li {
@@ -230,6 +231,21 @@ onMounted(() => {
   animation-name: flash-1;
   animation-duration: 2s;
   vertical-align: top;
+}
+
+/* Reduce number of lights on mobile for better performance */
+@media (max-width: 768px) {
+  .lightrope li:nth-child(n+22) {
+    display: none;
+  }
+}
+
+/* Disable animations for reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  .lightrope li {
+    animation: none;
+    opacity: 0.8;
+  }
 }
 
 .lightrope li:nth-child(2n+1) {
@@ -284,6 +300,22 @@ onMounted(() => {
   margin-left: -40px;
 }
 
+/* Prevent lights from causing extra scroll space on mobile */
+@media (max-width: 768px) {
+  .lightrope {
+    overflow-x: clip;
+    overflow-y: visible;
+  }
+  
+  .lightrope li {
+    margin: 0 15px;
+  }
+  
+  .lightrope li:first-child {
+    margin-left: -20px;
+  }
+}
+
 @keyframes flash-1 {
   0%, 100% {
     background: rgba(220, 38, 38, 1); /* Red */
@@ -314,6 +346,13 @@ onMounted(() => {
   50% {
     background: rgba(234, 179, 8, 0.4);
     box-shadow: 0px 4.67px 24px 3px rgba(234, 179, 8, 0.2);
+  }
+}
+
+/* Reduce box-shadow intensity on mobile for better performance */
+@media (max-width: 768px) {
+  .lightrope li {
+    box-shadow: 0px 2px 12px 2px currentColor;
   }
 }
 </style>

@@ -8,11 +8,15 @@ import Register from './views/Register.vue'
 import Dashboard from './views/Dashboard.vue'
 import AdminDashboard from './views/AdminDashboard.vue'
 import UserDashboard from './views/UserDashboard.vue'
+import LetItDraw from './views/LetItDraw.vue'
+import ChristmasCannon from './views/ChristmasCannon.vue'
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
   { path: '/login', name: 'Login', component: Login },
   { path: '/register', name: 'Register', component: Register },
+  { path: '/let-it-draw', name: 'LetItDraw', component: LetItDraw },
+  { path: '/christmas-cannon', name: 'ChristmasCannon', component: ChristmasCannon },
   { 
     path: '/dashboard', 
     name: 'Dashboard',

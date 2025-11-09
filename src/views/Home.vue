@@ -30,21 +30,27 @@
 
       <!-- Decorative Elements -->
       <div class="grid md:grid-cols-3 gap-8 mt-20">
-        <div class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl text-center transform hover:scale-105 transition border-t-4 border-red-500">
-          <div class="text-5xl mb-4">🎁</div>
-          <h3 class="text-xl font-bold mb-3 text-gray-900 dark:text-white">Geschenke</h3>
+        <router-link 
+          to="/christmas-cannon"
+          class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl text-center transform hover:scale-105 transition border-t-4 border-red-500 cursor-pointer block"
+        >
+          <div class="text-5xl mb-4">🎄</div>
+          <h3 class="text-xl font-bold mb-3 text-gray-900 dark:text-white">Christmas Cannon</h3>
           <p class="text-gray-600 dark:text-gray-300">
-            Freude schenken und Freude erhalten
+            Schmücke den Raum mit Weihnachtsdeko!
           </p>
-        </div>
+        </router-link>
         
-        <div class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl text-center transform hover:scale-105 transition border-t-4 border-yellow-500">
+        <router-link 
+          to="/let-it-draw"
+          class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl text-center transform hover:scale-105 transition border-t-4 border-yellow-500 cursor-pointer block"
+        >
           <div class="text-5xl mb-4">⭐</div>
-          <h3 class="text-xl font-bold mb-3 text-gray-900 dark:text-white">Zusammen</h3>
+          <h3 class="text-xl font-bold mb-3 text-gray-900 dark:text-white">Let it draw</h3>
           <p class="text-gray-600 dark:text-gray-300">
-            Zeit mit den Liebsten verbringen
+            Weihnachtszeichnung
           </p>
-        </div>
+        </router-link>
         
         <div class="bg-white dark:bg-gray-800 p-8 rounded-2xl shadow-xl text-center transform hover:scale-105 transition border-t-4 border-green-600">
           <div class="text-5xl mb-4">🕯️</div>
@@ -59,7 +65,7 @@
       <div class="mt-20 text-center">
         <div class="inline-block bg-gradient-to-r from-red-100 to-green-100 dark:from-red-900/30 dark:to-green-900/30 p-8 rounded-3xl shadow-xl">
           <p class="text-2xl italic text-gray-700 dark:text-gray-200 mb-4">
-            "Weihnachten ist die Zeit, in der wir uns an die wichtigen Dinge im Leben erinnern"
+            "Weihnachten ist die Zeit, in der Kinder ganz brav sind – zumindest solange der Weihnachtsmann zuschaut"
           </p>
           <div class="flex justify-center space-x-2 text-3xl">
             <span>❄️</span>
@@ -68,26 +74,6 @@
             <span>🎁</span>
             <span>❄️</span>
           </div>
-        </div>
-      </div>
-
-      <!-- Winter Scene -->
-      <div class="mt-20 grid md:grid-cols-4 gap-6 text-center">
-        <div class="transform hover:scale-110 transition">
-          <div class="text-6xl mb-2">❄️</div>
-          <p class="text-sm text-gray-600 dark:text-gray-400">Schneeflocken</p>
-        </div>
-        <div class="transform hover:scale-110 transition">
-          <div class="text-6xl mb-2">🎅</div>
-          <p class="text-sm text-gray-600 dark:text-gray-400">Weihnachtsmann</p>
-        </div>
-        <div class="transform hover:scale-110 transition">
-          <div class="text-6xl mb-2">🦌</div>
-          <p class="text-sm text-gray-600 dark:text-gray-400">Rentiere</p>
-        </div>
-        <div class="transform hover:scale-110 transition">
-          <div class="text-6xl mb-2">🔔</div>
-          <p class="text-sm text-gray-600 dark:text-gray-400">Glocken</p>
         </div>
       </div>
     </div>

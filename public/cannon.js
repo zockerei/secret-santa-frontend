@@ -560,11 +560,8 @@ const GAME_STATE = {
 	game: 'game'
 }
 
-let sounds = {
-	fire: [new Audio('https://assets.codepen.io/557388/fire_01.mp3'), new Audio('https://assets.codepen.io/557388/fire_02.mp3')],
-	bells: [new Audio('https://assets.codepen.io/557388/bells_01.mp3')],
-	bing: [new Audio('https://assets.codepen.io/557388/bing_01.mp3'), new Audio('https://assets.codepen.io/557388/bing_02.mp3')]
-};
+// Sounds disabled
+let sounds = {};
 
 let gameState = GAME_STATE.loading;
 
@@ -732,13 +729,7 @@ function hideEndMessage()
 
 function playSound(name)
 {
-	let options = sounds[name];
-	if(options)
-	{
-		let sound = options[Math.floor(Math.random() * options.length)];
-		sound.currentTime = 0;
-		sound.play();
-	}
+	// Sounds disabled - do nothing
 }
 
 function startGame()

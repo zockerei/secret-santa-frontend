@@ -2,6 +2,15 @@
   <div class="christmas-cannon-container" :class="{ 'game-active': isGameActive }">
     <div id="canvas-container"></div>
     <div id="loading" v-if="isLoading">Loading</div>
+    
+    <!-- Hidden UI elements required by cannon.js -->
+    <div id="ui" style="display: none;">
+      <img id="steve" src="" alt="" style="display: none;" />
+      <div id="bubble" class="speech-bubble" style="display: none;">
+        <p id="text"></p>
+        <p id="text-highlight"></p>
+      </div>
+    </div>
   </div>
 </template>
 

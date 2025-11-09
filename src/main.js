@@ -10,6 +10,7 @@ import AdminDashboard from './views/AdminDashboard.vue'
 import UserDashboard from './views/UserDashboard.vue'
 import LetItDraw from './views/LetItDraw.vue'
 import ChristmasCannon from './views/ChristmasCannon.vue'
+import ChristmasMusic from './views/ChristmasMusic.vue'
 
 const routes = [
   { path: '/', name: 'Home', component: Home },
@@ -17,6 +18,7 @@ const routes = [
   { path: '/register', name: 'Register', component: Register },
   { path: '/let-it-draw', name: 'LetItDraw', component: LetItDraw },
   { path: '/christmas-cannon', name: 'ChristmasCannon', component: ChristmasCannon },
+  { path: '/christmas-music', name: 'ChristmasMusic', component: ChristmasMusic },
   { 
     path: '/dashboard', 
     name: 'Dashboard',

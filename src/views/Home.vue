@@ -83,7 +83,7 @@
             <div class="text-5xl mb-4">🎄</div>
             <h3 class="text-xl font-bold mb-3 text-gray-900 dark:text-white">Christmas Cannon</h3>
             <p class="text-gray-600 dark:text-gray-300">
-              Schmücke den Raum mit Weihnachtsdeko!
+              Schmücke den Raum mit Weihnachtsdeko
             </p>
           </div>
         </router-link>
@@ -114,7 +114,10 @@
         </router-link>
         
         <!-- Besinnlich Card with Green Electric Border -->
-        <div class="electric-card electric-green">
+        <router-link 
+          to="/christmas-music"
+          class="electric-card electric-green block cursor-pointer"
+        >
           <div class="electric-inner">
             <div class="electric-border-outer">
               <div class="electric-main-border"></div>
@@ -127,13 +130,13 @@
           <div class="electric-bg-glow"></div>
           
           <div class="electric-content">
-            <div class="text-5xl mb-4">🕯️</div>
-            <h3 class="text-xl font-bold mb-3 text-gray-900 dark:text-white">Besinnlich</h3>
+            <div class="text-5xl mb-4">🎵</div>
+            <h3 class="text-xl font-bold mb-3 text-gray-900 dark:text-white">Weihnachtsmusik</h3>
             <p class="text-gray-600 dark:text-gray-300">
-              Ruhe und Gemütlichkeit genießen
+              Visualisierte Musik
             </p>
           </div>
-        </div>
+        </router-link>
       </div>
 
       <!-- Christmas Quote -->

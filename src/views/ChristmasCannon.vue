@@ -26,7 +26,7 @@ export default {
         // Load the script dynamically since it uses CDN imports
         const script = document.createElement('script')
         script.type = 'module'
-        script.src = '/src/utils/cannon.js'
+        script.src = '/cannon.js'
         script.onload = () => {
           setTimeout(() => {
             this.isLoading = false
@@ -34,6 +34,7 @@ export default {
         }
         script.onerror = (error) => {
           console.error('Failed to load Christmas Cannon:', error)
+          console.error('Attempted to load from:', script.src)
           this.isLoading = false
         }
         document.head.appendChild(script)

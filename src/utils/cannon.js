@@ -138,7 +138,6 @@ class Stage
 		let colors = [0xff0000, 0x00ff00, 0x0000ff, 0xffff00, 0xff00ff,  0x00ffff];
 
 		for (let i = 0; i < 3; i++) {
-
 			let group = new Group();
 			group.position.x = 1000;
 
@@ -156,290 +155,139 @@ class Stage
 			this.lights.push(group);
 		}
 
-		let sofaGroup = new Group();
-		sofaGroup.position.y = 1000;
-		this.scene.add(sofaGroup);
+		// Helper function to load GLTF models
+		const loadModel = (config) => {
+			const { name, url, groupY = 1000, materialColor, position, scale, rotation, 
+					onLoad, traverseCallback } = config;
+			
+			let modelGroup = new Group();
+			if (groupY !== null) modelGroup.position.y = groupY;
+			this.scene.add(modelGroup);
 
-		var sofaLoader = new GLTFLoader(manager);
-		sofaLoader.load("https://assets.codepen.io/557388/sofa.glb", object => {
+			const loader = new GLTFLoader(manager);
+			loader.load(url, (object) => {
+				if (position) object.scene.position.set(...position);
+				if (scale) object.scene.scale.set(...(Array.isArray(scale) ? scale : [scale, scale, scale]));
+				if (rotation) {
+					if (rotation.x !== undefined) object.scene.rotation.x = rotation.x;
+					if (rotation.y !== undefined) object.scene.rotation.y = rotation.y;
+					if (rotation.z !== undefined) object.scene.rotation.z = rotation.z;
+				}
 
-			object.scene.rotation.y = Math.PI * 0.5;
-			let mat = new MeshPhongMaterial  ( { color: 0xffffff } );
+				modelGroup.add(object.scene);
+				if (groupY !== null) modelGroup.position.y = groupY;
 
-			sofaGroup.add( object.scene );
+				const defaultTraverse = (child) => {
+					if (child.isMesh) {
+						if (materialColor) {
+							const mat = new MeshPhongMaterial({ color: materialColor });
+							child.material = mat;
+							child.castShadow = true;
+							child.receiveShadow = true;
+						} else {
+							child.castShadow = true;
+						}
+					} else if (child.isLight) {
+						child.visible = false;
+					}
+				};
 
-			object.scene.traverse( function( child ) { 
+				object.scene.traverse(traverseCallback || defaultTraverse);
+				this.models[name] = modelGroup;
+				if (onLoad) onLoad(modelGroup);
+			});
+		};
 
-				if ( child.isMesh ) {
+		// Load all models using the helper
+		loadModel({
+			name: 'sofa',
+			url: 'https://assets.codepen.io/557388/sofa.glb',
+			materialColor: 0xffffff,
+			rotation: { y: Math.PI * 0.5 },
+			traverseCallback: (child) => {
+				if (child.isMesh) {
 					child.position.set(0, 0, 0);
 					child.castShadow = true;
 					child.receiveShadow = true;
-					child.material = mat;
-				}
-				else if(child.isLight)
-				{
-					child.visible = false;//child.intensity = 0;
-				}
-
-			} );
-
-			this.models.sofa = sofaGroup;
-		});
-
-		let treeGroup = new Group();
-		treeGroup.position.y = 1000;
-		this.scene.add( treeGroup );
-
-		var treeLoader = new GLTFLoader(manager);
-		treeLoader.load("https://assets.codepen.io/557388/PineTree.gltf", object => {
-
-			object.scene.position.set(0, 0, -17);
-			object.scene.scale.set(1.2, 1.2, 1.2);
-			object.scene.rotation.x = Math.PI * 0.5;
-
-			treeGroup.add( object.scene );
-			treeGroup.position.y = 1000;
-
-			object.scene.traverse( function( child ) { 
-
-				let mat = new MeshPhongMaterial  ( { color: 0x99dd66 } );
-				if ( child.isMesh ) {
-					child.castShadow = true;
-					child.receiveShadow = true;
-					child.material = mat;
-				}
-				else if(child.isLight)
-				{
-					child.visible = false;//child.intensity = 0;
-				}
-
-			} );
-
-			this.models.tree = treeGroup;
-		});
-
-		let fireplaceGroup = new Group();
-		this.scene.add( fireplaceGroup );
-
-		var fireplaceLoader = new GLTFLoader(manager);
-		fireplaceLoader.load("https://assets.codepen.io/557388/fireplace.gltf", object => {
-
-			object.scene.position.set(0, -29, -19.5);
-			object.scene.scale.set(4, 4, 4);
-			object.scene.rotation.y = -Math.PI * 0.5;
-		  	fireplaceGroup.add( object.scene );
-
-			object.scene.traverse( function( child ) { 
-
-				let mat = new MeshPhongMaterial  ( { color: 0xffffff } );
-				if ( child.isMesh ) {
-					child.castShadow = true;
-					child.receiveShadow = true;
-					child.material = mat;
-				}
-				else if(child.isLight)
-				{
-					child.visible = false;//child.intensity = 0;
-				}
-
-			} );
-
-			this.models.fireplace = fireplaceGroup;
-		});
-
-		let tableGroup = new Group();
-		tableGroup.position.y = 1000;
-		this.scene.add( tableGroup );
-
-		var tableLoader = new GLTFLoader(manager);
-		tableLoader.load("https://assets.codepen.io/557388/table.gltf", object => {
-
-			object.scene.position.set(0, -6.3, 0);
-			object.scene.scale.set(2, 2, 2);
-		  	tableGroup.add( object.scene );
-
-			object.scene.traverse( function( child ) { 
-
-				let mat = new MeshPhongMaterial  ( { color: 0xffffff } );
-				if ( child.isMesh ) {
-					child.castShadow = true;
-					child.receiveShadow = true;
-					child.material = mat;
-				}
-				else if(child.isLight)
-				{
+					child.material = new MeshPhongMaterial({ color: 0xffffff });
+				} else if (child.isLight) {
 					child.visible = false;
 				}
-
-			} );
-
-			this.models.table = tableGroup;
+			}
 		});
 
-		let standGroup = new Group();
-		standGroup.position.y = 1000;
-		this.scene.add( standGroup );
-
-		var tableLoader = new GLTFLoader(manager);
-		tableLoader.load("https://assets.codepen.io/557388/stand.gltf", object => {
-
-			object.scene.rotation.y = Math.PI * 0.5;
-		  	standGroup.add( object.scene );
-
-			object.scene.traverse( function( child ) { 
-
-				let mat = new MeshPhongMaterial  ( { color: 0xffffff } );
-				if ( child.isMesh ) {
-					child.castShadow = true;
-					child.receiveShadow = true;
-					child.material = mat;
-				}
-				else if(child.isLight)
-				{
-					child.visible = false;//child.intensity = 0;
-				}
-
-			} );
-
-			this.models.stand = standGroup;
+		loadModel({
+			name: 'tree',
+			url: 'https://assets.codepen.io/557388/PineTree.gltf',
+			materialColor: 0x99dd66,
+			position: [0, 0, -17],
+			scale: [1.2, 1.2, 1.2],
+			rotation: { x: Math.PI * 0.5 }
 		});
 
-		let tvGroup = new Group();
-		tvGroup.position.y = 1000;
-		this.scene.add( tvGroup );
-
-		var tableLoader = new GLTFLoader(manager);
-		tableLoader.load("https://assets.codepen.io/557388/tv.gltf", object => {
-
-			object.scene.scale.set(2, 2, 2);
-			object.scene.rotation.y = Math.PI * 0.5;
-		  	tvGroup.add( object.scene );
-
-			object.scene.traverse( function( child ) { 
-
-				let mat = new MeshPhongMaterial  ( { color: 0xffffff } );
-				if ( child.isMesh ) {
-					child.castShadow = true;
-					child.receiveShadow = true;
-					child.material = mat;
-				}
-				else if(child.isLight)
-				{
-					child.visible = false;//child.intensity = 0;
-				}
-
-			} );
-
-			this.models.tv = tvGroup;
+		loadModel({
+			name: 'fireplace',
+			url: 'https://assets.codepen.io/557388/fireplace.gltf',
+			groupY: null,
+			materialColor: 0xffffff,
+			position: [0, -29, -19.5],
+			scale: [4, 4, 4],
+			rotation: { y: -Math.PI * 0.5 }
 		});
 
-		let potGroup = new Group();
-		potGroup.position.y = 1000;
-		this.scene.add( potGroup );
-
-		var tableLoader = new GLTFLoader(manager);
-		tableLoader.load("https://assets.codepen.io/557388/pot.gltf", object => {
-
-			object.scene.position.set(0, 0, -15);
-			object.scene.scale.set(6, 6, 6);
-			object.scene.rotation.x = Math.PI * 0.5;
-		  	potGroup.add( object.scene );
-
-			object.scene.traverse( function( child ) { 
-
-				let mat = new MeshPhongMaterial  ( { color: 0xB2967D } );
-				if ( child.isMesh ) {
-					child.castShadow = true;
-					child.receiveShadow = true;
-					child.material = mat;
-				}
-				else if(child.isLight)
-				{
-					child.visible = false;//child.intensity = 0;
-				}
-
-			} );
-
-			this.models.pot = potGroup;
+		loadModel({
+			name: 'table',
+			url: 'https://assets.codepen.io/557388/table.gltf',
+			materialColor: 0xffffff,
+			position: [0, -6.3, 0],
+			scale: [2, 2, 2]
 		});
 
-		let cannonGroup = new Group();
-		this.scene.add( cannonGroup );
-
-		var tableLoader = new GLTFLoader(manager);
-		tableLoader.load("https://assets.codepen.io/557388/cannon2.gltf", object => {
-
-			object.scene.position.set(30, -30, 30);
-			object.scene.scale.set(3, 3, 3);
-			object.scene.rotation.y = Math.PI * 1.25;
-		  	cannonGroup.add( object.scene );
-
-			object.scene.traverse( function( child ) { 
-
-				if ( child.isMesh ) {
-					child.castShadow = true;
-				}
-				if(child.isLight)
-				{
-					child.visible = false;//child.intensity = 0;
-				}
-
-			} );
-
-			this.models.cannon = cannonGroup;
+		loadModel({
+			name: 'stand',
+			url: 'https://assets.codepen.io/557388/stand.gltf',
+			materialColor: 0xffffff,
+			rotation: { y: Math.PI * 0.5 }
 		});
 
-		let snowmanGroup = new Group();
-		snowmanGroup.position.y = 1000;
-		this.scene.add( snowmanGroup );
-
-		var snowmanLoader = new GLTFLoader(manager);
-		snowmanLoader.load("https://assets.codepen.io/557388/snowman.gltf", object => {
-
-			object.scene.scale.set(2.5, 2.5, 2.5);
-		  	snowmanGroup.add( object.scene );
-
-			object.scene.traverse( function( child ) { 
-
-				if ( child.isMesh ) {
-					child.castShadow = true;
-				}
-				if(child.isLight)
-				{
-					child.visible = false;//child.intensity = 0;
-				}
-
-			} );
-
-			this.models.snowman = snowmanGroup;
+		loadModel({
+			name: 'tv',
+			url: 'https://assets.codepen.io/557388/tv.gltf',
+			materialColor: 0xffffff,
+			scale: [2, 2, 2],
+			rotation: { y: Math.PI * 0.5 }
 		});
 
-		let starGroup = new Group();
-		starGroup.position.y = 1000;
-		this.scene.add( starGroup );
+		loadModel({
+			name: 'pot',
+			url: 'https://assets.codepen.io/557388/pot.gltf',
+			materialColor: 0xB2967D,
+			position: [0, 0, -15],
+			scale: [6, 6, 6],
+			rotation: { x: Math.PI * 0.5 }
+		});
 
-		var starLoader = new GLTFLoader(manager);
-		starLoader.load("https://assets.codepen.io/557388/star.gltf", object => {
+		loadModel({
+			name: 'cannon',
+			url: 'https://assets.codepen.io/557388/cannon2.gltf',
+			groupY: null,
+			position: [30, -30, 30],
+			scale: [3, 3, 3],
+			rotation: { y: Math.PI * 1.25 }
+		});
 
-			object.scene.position.set(-1, 0, 0);
-			object.scene.scale.set(0.01, 0.01, 0.01);
-			object.scene.rotation.y = Math.PI * .5;
-		  	starGroup.add( object.scene );
+		loadModel({
+			name: 'snowman',
+			url: 'https://assets.codepen.io/557388/snowman.gltf',
+			scale: [2.5, 2.5, 2.5]
+		});
 
-			object.scene.traverse( function( child ) { 
-
-				if ( child.isMesh ) {
-					child.castShadow = true;
-				}
-				if(child.isLight)
-				{
-					child.visible = false;
-
-				}
-
-			} );
-
-			this.models.star = starGroup;
+		loadModel({
+			name: 'star',
+			url: 'https://assets.codepen.io/557388/star.gltf',
+			position: [-1, 0, 0],
+			scale: [0.01, 0.01, 0.01],
+			rotation: { y: Math.PI * 0.5 }
 		});
 
 		this.onResize();
@@ -550,20 +398,27 @@ class Physics
 {
 	constructor(scale = 1, stageSize)
 	{
-		this.scale = 1;
-		this.stageSize;
-
-        this.scale = scale;
+		this.scale = scale;
 		this.stageSize = stageSize;
-
 		this.materials = {};
 
-        let mainMaterial = new CANNON.Material('main');
+		const mainMaterial = new CANNON.Material('main');
 		mainMaterial.friction = 1;
 
-		this.materials[PHYSICS_MATERIAL.lowBounce] = new CANNON.ContactMaterial(mainMaterial, mainMaterial, {friction: 2, restitution: 0 + extraBounce });
-		this.materials[PHYSICS_MATERIAL.normalBounce] = new CANNON.ContactMaterial(mainMaterial, mainMaterial, {friction: 2, restitution: 0 + extraBounce });
-		this.materials[PHYSICS_MATERIAL.highBounce] = new CANNON.ContactMaterial(mainMaterial, mainMaterial, {friction: 2, restitution: 1.5 + extraBounce });
+		// Create physics materials with different bounce properties
+		const materialConfigs = [
+			{ key: PHYSICS_MATERIAL.lowBounce, restitution: 0 },
+			{ key: PHYSICS_MATERIAL.normalBounce, restitution: 0 },
+			{ key: PHYSICS_MATERIAL.highBounce, restitution: 1.5 }
+		];
+
+		materialConfigs.forEach(config => {
+			const contactMaterial = new CANNON.ContactMaterial(mainMaterial, mainMaterial, {
+				friction: 2,
+				restitution: config.restitution + extraBounce
+			});
+			this.materials[config.key] = contactMaterial;
+		});
 
 		this.world = new CANNON.World();
 		this.world.gravity.set(0, -60 * this.scale, 0);
@@ -571,9 +426,10 @@ class Physics
 		this.world.solver.iterations = 4;
 		this.world.allowSleep = true;
 
-		this.world.addContactMaterial(this.materials[PHYSICS_MATERIAL.lowBounce]); 
-		this.world.addContactMaterial(this.materials[PHYSICS_MATERIAL.normalBounce]); 
-		this.world.addContactMaterial(this.materials[PHYSICS_MATERIAL.highBounce]); 
+		// Add all contact materials to the world
+		Object.values(this.materials).forEach(material => {
+			this.world.addContactMaterial(material);
+		}); 
 
 		this.groundBody = new CANNON.Body({mass: 0, material: mainMaterial});
 		let groundShape = new CANNON.Plane();
@@ -696,11 +552,6 @@ class Physics
 }
 
 console.clear();
-
-const DIRECTION = {
-	left: 'LEFT',
-	right: 'RIGHT'
-}
 
 const GAME_STATE = {
 	loading: 'loading',
@@ -1183,438 +1034,238 @@ function init()
 
 }
 
-function createSofa()
-	{
-		let body = physics.createBody(5, {x: 12, y: -10, z: 2}, {y: Math.PI * 1.023, x: Math.PI * 0.01}, PHYSICS_MATERIAL.lowBounce);
+// Helper function to create furniture with physics
+function createFurniture(config) {
+	const { 
+		mass, position, rotation, material, 
+		shapes, modelName, additionalModels = [],
+		initialVelocity = { x: 0, y: -20, z: 0 },
+		shapeType = 'box' // 'box', 'cylinder', 'sphere'
+	} = config;
 
-		let shapes = [{
-			show: false,
-			x: 0,
-			y: -1.5,
-			z: 0,
-			width: 9,
-			height: 2.6,
-			depth: 23.5,
-			rotation: 0
-		},
-		{
-			show: false,
-			x: -4,
-			y: 0,
-			z: 0,
-			width: 2.3,
-			height: 6,
-			depth: 23,
-			rotation: 0
-		},
-		{
-			show: false,
-			x: 0,
-			y: 0,
-			z: -10.3,
-			width: 9,
-			height: 2,
-			depth: 2.5,
-			rotation: 0
-		},
-		{
-			show: false,
-			x: 0,
-			y: 0,
-			z: 10.3,
-			width: 9,
-			height: 2,
-			depth: 2.5,
-			rotation: 0
-		},
-		{
-			show: false,
-			x: -2.2,
-			y: 2.8,
-			z: 0,
-			width: 3.5,
-			height: 1,
-			depth: 18.5,
-			rotation: -Math.PI * 0.4
-		}];
-
-		stage.models.sofa.position.y = 0;
-
-		let sofaGroup = new Group();
-		sofaGroup.add(stage.models.sofa)
-		stage.scene.add(sofaGroup);
-
-		shapes.forEach(box => {
-			let shape = physics.createBoxShape(box.width, box.height, box.depth);
-
-			if(showGuides)
-			{
-				let b = stage.createBox(box.width, box.height, box.depth, 0xff0000);
-				b.position.set(box.x, box.y, box.z);
-				b.rotation.set(0, 0, box.rotation);
-				sofaGroup.add(b);
-			}
-
-			body.addShape(shape, new CANNON.Vec3(box.x, box.y, box.z), new CANNON.Quaternion(0, 0, box.rotation));
-		})
-
-		var physicsItem = { 
-			mesh: sofaGroup,
-			physics: body,
-		}
-
-		physicsItem.physics.velocity.set(0, -20, 0)
-
-		physicsItems.push(physicsItem);
+	const body = physics.createBody(mass, position, rotation, material);
+	
+	// Handle additional angle adjustments
+	if (config.additionalAngle) {
+		physics.setAngle(body, config.additionalAngle.angle, config.additionalAngle.direction);
 	}
 
-	function createTable()
-	{
-		let body = physics.createBody(3, {x: 0, y: -13, z: 2}, {y: -Math.PI * 1.013, x: Math.PI * 0.01}, PHYSICS_MATERIAL.lowBounce);
-
-		let shapes = [
-			{
-				x: 0.5,
-				y: -1.2,
-				z: 0,
-				width: 7,
-				height: 0.5,
-				depth: 16,
-				rotation: 0
-			},
-			{
-				x: 4,
-				y: -2.5,
-				z: 7.8,
-				width: 0.5,
-				height: 2.5,
-				depth: 0.5,
-				rotation: 0
-			},
-			{
-				x: 4,
-				y: -2.5,
-				z: -7.8,
-				width: 0.5,
-				height: 2.5,
-				depth: 0.5,
-				rotation: 0
-			},
-			{
-				x: -2.8,
-				y: -2.5,
-				z: 7.8,
-				width: 0.5,
-				height: 2.5,
-				depth: 0.5,
-				rotation: 0
-			},
-			{
-				x: -2.8,
-				y: -2.5,
-				z: -7.8,
-				width: 0.5,
-				height: 2.5,
-				depth: 0.5,
-				rotation: 0
-			},
-		];
-
-		stage.models.table.position.y = 0;
-
-		let tableGroup = new Group();
-		tableGroup.add(stage.models.table)
-		stage.scene.add(tableGroup);
-
-		shapes.forEach(box => {
-			let shape = physics.createBoxShape(box.width, box.height, box.depth);
-
-			if(showGuides)
-			{
-				let b = stage.createBox(box.width, box.height, box.depth, 0xff0000);
-				b.position.set(box.x, box.y, box.z);
-				b.rotation.set(0, 0, box.rotation);
-				tableGroup.add(b);
-			}
-
-			body.addShape(shape, new CANNON.Vec3(box.x, box.y, box.z), new CANNON.Quaternion(0, 0, box.rotation));
-		})
-
-		var physicsItem = { 
-			mesh: tableGroup,
-			physics: body,
-		}
-
-		physicsItem.physics.velocity.set(0, -20, 0)
-
-		physicsItems.push(physicsItem);
+	// Get model(s) and create group
+	const model = stage.models[modelName];
+	if (!model) {
+		console.warn(`Model ${modelName} not found`);
+		return null;
 	}
 
-	function createStand()
-	{
-		let body = physics.createBody(6, {x: -16, y: -10, z: 0}, {y: -Math.PI * 0.001, x: Math.PI * 0.05}, PHYSICS_MATERIAL.lowBounce);
+	model.position.y = 0;
+	const group = new Group();
+	group.add(model);
+	additionalModels.forEach(name => {
+		const addModel = stage.models[name];
+		if (addModel) {
+			addModel.position.y = 0;
+			group.add(addModel);
+		}
+	});
+	stage.scene.add(group);
 
-		let shapes = [
-			{
-				x: 0,
-				y: 1.5,
-				z: 0,
-				width: 4.5,
-				height: 4.8,
-				depth: 18,
-				rotation: 0
+	// Process shapes
+	shapes.forEach(shapeData => {
+		let shape;
+		let visualShape = null;
+
+		if (shapeType === 'box' || shapeData.width) {
+			shape = physics.createBoxShape(shapeData.width, shapeData.height, shapeData.depth);
+			if (showGuides) {
+				visualShape = stage.createBox(shapeData.width, shapeData.height, shapeData.depth, 0xff0000);
 			}
-
-		];
-
-		stage.models.stand.position.y = 0;
-
-		let standGroup = new Group();
-		standGroup.add(stage.models.stand)
-		stage.scene.add(standGroup);
-
-		shapes.forEach(box => {
-			let shape = physics.createBoxShape(box.width, box.height, box.depth);
-
-			if(showGuides)
-			{
-				let b = stage.createBox(box.width, box.height, box.depth, 0xff0000);
-				b.position.set(box.x, box.y, box.z);
-				b.rotation.set(0, 0, box.rotation);
-				standGroup.add(b);
+		} else if (shapeType === 'cylinder' || shapeData.topRadius !== undefined) {
+			shape = physics.createCylinderShape(
+				shapeData.topRadius, 
+				shapeData.bottomRadius, 
+				shapeData.height, 
+				shapeData.segments
+			);
+			if (showGuides) {
+				visualShape = stage.createCylinder(
+					shapeData.topRadius, 
+					shapeData.bottomRadius, 
+					shapeData.height, 
+					shapeData.segments, 
+					0xff0000
+				);
 			}
-
-			body.addShape(shape, new CANNON.Vec3(box.x, box.y, box.z), new CANNON.Quaternion(0, 0, box.rotation));
-		})
-
-		var physicsItem = { 
-			mesh: standGroup,
-			physics: body,
+		} else if (shapeType === 'sphere' || shapeData.radius !== undefined) {
+			shape = physics.createSphereShape(shapeData.radius);
+			if (showGuides) {
+				visualShape = stage.createSphere(shapeData.radius, 0xff0000);
+			}
 		}
 
-		physicsItem.physics.velocity.set(0, -20, 0)
-
-		physicsItems.push(physicsItem);
-	}
-
-	function createTV()
-	{
-		let body = physics.createBody(2, {x: -15.5, y: 0, z: 0}, {y: -Math.PI * 0.001, x: Math.PI * 0.001}, PHYSICS_MATERIAL.lowBounce);
-
-		let shapes = [
-			{
-				x: 0,
-				y: 4.5,
-				z: 0.5,
-				width: 1.5,
-				height: 9.5,
-				depth: 18,
-				rotation: 0
-			},
-			{
-				x: 0,
-				y: -1.6,
-				z: 0.5,
-				width: 2.5,
-				height: 0.5,
-				depth: 6.8,
-				rotation: 0
-			}
-
-		];
-
-		stage.models.tv.position.y = 0;
-
-		let tvGroup = new Group();
-		tvGroup.add(stage.models.tv)
-		stage.scene.add(tvGroup);
-
-		shapes.forEach(box => {
-			let shape = physics.createBoxShape(box.width, box.height, box.depth);
-
-			if(showGuides)
-			{
-				let b = stage.createBox(box.width, box.height, box.depth, 0xff0000);
-				b.position.set(box.x, box.y, box.z);
-				b.rotation.set(0, 0, box.rotation);
-				tvGroup.add(b);
-			}
-
-			body.addShape(shape, new CANNON.Vec3(box.x, box.y, box.z), new CANNON.Quaternion(0, 0, box.rotation));
-		})
-
-		var physicsItem = { 
-			mesh: tvGroup,
-			physics: body,
+		if (visualShape) {
+			visualShape.position.set(shapeData.x, shapeData.y, shapeData.z);
+			visualShape.rotation.set(0, 0, shapeData.rotation || 0);
+			group.add(visualShape);
 		}
 
-		physicsItem.physics.velocity.set(0, -20, 0)
+		const quaternion = new CANNON.Quaternion(0, 0, shapeData.rotation || 0);
+		body.addShape(shape, new CANNON.Vec3(shapeData.x, shapeData.y, shapeData.z), quaternion);
+	});
 
-		physicsItems.push(physicsItem);
-	}
+	const physicsItem = {
+		mesh: group,
+		physics: body
+	};
 
-	function createTree()
-	{
-		let body = physics.createBody(10, {x: 30, y: -10, z: 30}, {y: -Math.PI * 0.001, x: Math.PI * 0.001}, PHYSICS_MATERIAL.lowBounce);
-		physics.setAngle(body, -Math.PI * 0.5, 'x');
-		let shapes = [
-			{
-				x: 0,
-				y: 0,
-				z: -2.2,
-				topRadius: 1,
-				bottomRadius: 6,
-				height: 16,
-				segments: 10
-			},
-			{
-				x: 0,
-				y: 0,
-				z: -13,
-				topRadius: 0.5,
-				bottomRadius: 1,
-				height: 7,
-				segments: 5
-			},
-			{
-				x: 0,
-				y: 0,
-				z: -15,
-				topRadius: 3,
-				bottomRadius: 2,
-				height: 5,
-				segments: 7
-			}
-		];
+	physicsItem.physics.velocity.set(initialVelocity.x, initialVelocity.y, initialVelocity.z);
+	physicsItems.push(physicsItem);
 
-		stage.models.tree.position.y = 0;
-		stage.models.pot.position.y = 0;
+	return physicsItem;
+}
 
-		let treeGroup = new Group();
-		treeGroup.add(stage.models.tree);
-		treeGroup.add(stage.models.pot);
-		stage.scene.add(treeGroup);
+function createSofa() {
+	return createFurniture({
+		mass: 5,
+		position: { x: 12, y: -10, z: 2 },
+		rotation: { y: Math.PI * 1.023, x: Math.PI * 0.01 },
+		material: PHYSICS_MATERIAL.lowBounce,
+		modelName: 'sofa',
+		shapes: [
+			{ x: 0, y: -1.5, z: 0, width: 9, height: 2.6, depth: 23.5, rotation: 0 },
+			{ x: -4, y: 0, z: 0, width: 2.3, height: 6, depth: 23, rotation: 0 },
+			{ x: 0, y: 0, z: -10.3, width: 9, height: 2, depth: 2.5, rotation: 0 },
+			{ x: 0, y: 0, z: 10.3, width: 9, height: 2, depth: 2.5, rotation: 0 },
+			{ x: -2.2, y: 2.8, z: 0, width: 3.5, height: 1, depth: 18.5, rotation: -Math.PI * 0.4 }
+		]
+	});
+}
 
-		shapes.forEach(cylinder => {
-			let shape = physics.createCylinderShape(cylinder.topRadius, cylinder.bottomRadius, cylinder.height, cylinder.segments);
+function createTable() {
+	return createFurniture({
+		mass: 3,
+		position: { x: 0, y: -13, z: 2 },
+		rotation: { y: -Math.PI * 1.013, x: Math.PI * 0.01 },
+		material: PHYSICS_MATERIAL.lowBounce,
+		modelName: 'table',
+		shapes: [
+			{ x: 0.5, y: -1.2, z: 0, width: 7, height: 0.5, depth: 16, rotation: 0 },
+			{ x: 4, y: -2.5, z: 7.8, width: 0.5, height: 2.5, depth: 0.5, rotation: 0 },
+			{ x: 4, y: -2.5, z: -7.8, width: 0.5, height: 2.5, depth: 0.5, rotation: 0 },
+			{ x: -2.8, y: -2.5, z: 7.8, width: 0.5, height: 2.5, depth: 0.5, rotation: 0 },
+			{ x: -2.8, y: -2.5, z: -7.8, width: 0.5, height: 2.5, depth: 0.5, rotation: 0 }
+		]
+	});
+}
 
-			if(showGuides)
-			{
-				let b = stage.createCylinder(cylinder.topRadius, cylinder.bottomRadius, cylinder.height, cylinder.segments, 0xff0000);
-				b.position.set(cylinder.x, cylinder.y, cylinder.z);
-				b.rotation.set(0,0,0);
-				treeGroup.add(b);
-			}
+function createStand() {
+	return createFurniture({
+		mass: 6,
+		position: { x: -16, y: -10, z: 0 },
+		rotation: { y: -Math.PI * 0.001, x: Math.PI * 0.05 },
+		material: PHYSICS_MATERIAL.lowBounce,
+		modelName: 'stand',
+		shapes: [
+			{ x: 0, y: 1.5, z: 0, width: 4.5, height: 4.8, depth: 18, rotation: 0 }
+		]
+	});
+}
 
-			body.addShape(shape, new CANNON.Vec3(cylinder.x, cylinder.y, cylinder.z), new CANNON.Quaternion(0, 0, cylinder.rotation));
-		})
+function createTV() {
+	return createFurniture({
+		mass: 2,
+		position: { x: -15.5, y: 0, z: 0 },
+		rotation: { y: -Math.PI * 0.001, x: Math.PI * 0.001 },
+		material: PHYSICS_MATERIAL.lowBounce,
+		modelName: 'tv',
+		shapes: [
+			{ x: 0, y: 4.5, z: 0.5, width: 1.5, height: 9.5, depth: 18, rotation: 0 },
+			{ x: 0, y: -1.6, z: 0.5, width: 2.5, height: 0.5, depth: 6.8, rotation: 0 }
+		]
+	});
+}
 
-		var physicsItem = { 
-			mesh: treeGroup,
-			physics: body,
+function createTree() {
+	return createFurniture({
+		mass: 10,
+		position: { x: 30, y: -10, z: 30 },
+		rotation: { y: -Math.PI * 0.001, x: Math.PI * 0.001 },
+		material: PHYSICS_MATERIAL.lowBounce,
+		modelName: 'tree',
+		additionalModels: ['pot'],
+		shapeType: 'cylinder',
+		additionalAngle: { angle: -Math.PI * 0.5, direction: 'x' },
+		initialVelocity: { x: 0, y: 0, z: 0 },
+		shapes: [
+			{ x: 0, y: 0, z: -2.2, topRadius: 1, bottomRadius: 6, height: 16, segments: 10, rotation: 0 },
+			{ x: 0, y: 0, z: -13, topRadius: 0.5, bottomRadius: 1, height: 7, segments: 5, rotation: 0 },
+			{ x: 0, y: 0, z: -15, topRadius: 3, bottomRadius: 2, height: 5, segments: 7, rotation: 0 }
+		]
+	});
+}
+
+function createSnowman() {
+	return createFurniture({
+		mass: 10,
+		position: { x: 30, y: -10, z: 30 },
+		rotation: { y: 0, x: Math.PI * 0.5 },
+		material: PHYSICS_MATERIAL.normalBounce,
+		modelName: 'snowman',
+		shapeType: 'sphere',
+		additionalAngle: { angle: -Math.PI * 0.5, direction: 'x' },
+		initialVelocity: { x: 0, y: 0, z: 0 },
+		shapes: [
+			{ x: 0, y: 2.5, z: 0, radius: 3 },
+			{ x: 0, y: 5, z: 0, radius: 2.5 },
+			{ x: 0, y: 9.5, z: 0, radius: 1.7 }
+		]
+	});
+}
+
+function createStar() {
+	const star = stars.shift();
+	if (!star) return null;
+
+	const body = physics.createBody(1, { x: 30, y: -10, z: 30 }, { y: 0, x: Math.PI * 0.5 }, PHYSICS_MATERIAL.normalBounce);
+	
+	star.position.y = 0;
+
+	const shapes = [{
+		x: 0, y: 0, z: 0,
+		topRadius: 1, bottomRadius: 1, height: 0.5, segments: 5,
+		rotation: 0
+	}];
+
+	shapes.forEach(cylinder => {
+		const shape = physics.createCylinderShape(
+			cylinder.topRadius, 
+			cylinder.bottomRadius, 
+			cylinder.height, 
+			cylinder.segments
+		);
+
+		if (showGuides) {
+			const b = stage.createCylinder(
+				cylinder.topRadius, 
+				cylinder.bottomRadius, 
+				cylinder.height, 
+				cylinder.segments, 
+				0xff0000
+			);
+			b.position.set(cylinder.x, cylinder.y, cylinder.z);
+			b.rotation.set(0, 0, 0);
+			star.add(b);
 		}
 
-		physicsItems.push(physicsItem);
+		body.addShape(shape, new CANNON.Vec3(cylinder.x, cylinder.y, cylinder.z), new CANNON.Quaternion(0, 0, cylinder.rotation));
+	});
 
-		return physicsItem;
-	}
+	const physicsItem = {
+		mesh: star,
+		physics: body
+	};
 
-	function createSnowman()
-	{
-		let body = physics.createBody(10, {x: 30, y: -10, z: 30}, {y: 0, x: Math.PI * .5}, PHYSICS_MATERIAL.normalBounce);
-		physics.setAngle(body, -Math.PI * 0.5, 'x');
-		let shapes = [
-			{
-				x: 0,
-				y: 2.5,
-				z: 0,
-				radius: 3
-			},
-			{
-				x: 0,
-				y: 5,
-				z: 0,
-				radius: 2.5
-			},
-			{
-				x: 0,
-				y: 9.5,
-				z: 0,
-				radius: 1.7
-			}
-		];
-
-		stage.models.snowman.position.y = 0;
-
-		let snowmanGroup = new Group();
-		snowmanGroup.add(stage.models.snowman);
-		stage.scene.add(snowmanGroup);
-
-		shapes.forEach(sphere => {
-			let shape = physics.createSphereShape(sphere.radius);
-
-			if(showGuides)
-			{
-				let b = stage.createSphere(sphere.radius, 0xff0000);
-				b.position.set(sphere.x, sphere.y, sphere.z);
-				b.rotation.set(0,0,0);
-				snowmanGroup.add(b);
-			}
-
-			body.addShape(shape, new CANNON.Vec3(sphere.x, sphere.y, sphere.z), new CANNON.Quaternion(0, 0, 0));
-		})
-
-		var physicsItem = { 
-			mesh: snowmanGroup,
-			physics: body,
-		}
-
-		physicsItems.push(physicsItem);
-
-		return physicsItem;
-	}
-
-	function createStar()
-	{
-
-		let body = physics.createBody(1, {x: 30, y: -10, z: 30}, {y: 0, x: Math.PI * .5}, PHYSICS_MATERIAL.normalBounce);
-		let shapes = [
-			{
-				x: 0,
-				y: 0,
-				z: 0,
-				topRadius: 1,
-				bottomRadius: 1,
-				height: 0.5,
-				segments: 5
-			}
-		];
-
-		let star = stars.shift();
-		star.position.y = 0;
-
-		shapes.forEach(cylinder => {
-			let shape = physics.createCylinderShape(cylinder.topRadius, cylinder.bottomRadius, cylinder.height, cylinder.segments);
-
-			if(showGuides)
-			{
-				let b = stage.createCylinder(cylinder.topRadius, cylinder.bottomRadius, cylinder.height, cylinder.segments, 0xff0000);
-				b.position.set(cylinder.x, cylinder.y, cylinder.z);
-				b.rotation.set(0,0,0);
-				star.add(b);
-			}
-
-			body.addShape(shape, new CANNON.Vec3(cylinder.x, cylinder.y, cylinder.z), new CANNON.Quaternion(0, 0, cylinder.rotation));
-		})
-
-		var physicsItem = { 
-			mesh: star,
-			physics: body,
-		}
-
-		physicsItems.push(physicsItem);
-
-		return physicsItem;
-	}
+	physicsItems.push(physicsItem);
+	return physicsItem;
+}
 
 next();

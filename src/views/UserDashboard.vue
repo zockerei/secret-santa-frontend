@@ -42,6 +42,17 @@
           >
             Archiv
           </button>
+          <button
+            @click="activeTab = 'profile'"
+            :class="[
+              'whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors',
+              activeTab === 'profile'
+                ? 'border-red-500 text-red-600 dark:text-red-400'
+                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-200 hover:border-gray-300 dark:hover:border-gray-600'
+            ]"
+          >
+            Profil
+          </button>
         </nav>
       </div>
 
@@ -236,6 +247,189 @@
               <MarkdownRenderer :content="assignment.my_message" class="text-gray-700 dark:text-gray-200" />
             </div>
             </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Profile Tab -->
+      <div v-if="activeTab === 'profile'" class="space-y-6">
+        <div class="max-w-2xl mx-auto">
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6">
+            <div class="flex items-center justify-between mb-6">
+              <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Mein Profil</h2>
+              <button
+                v-if="!isEditingProfile"
+                @click="startEditProfile"
+                class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition text-sm font-medium"
+              >
+                Bearbeiten
+              </button>
+            </div>
+
+            <!-- View Mode -->
+            <div v-if="!isEditingProfile" class="space-y-4">
+              <div class="border-b border-gray-200 dark:border-gray-700 pb-4">
+                <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Name</label>
+                <p class="text-lg text-gray-900 dark:text-white">{{ user?.name }}</p>
+              </div>
+              <div class="border-b border-gray-200 dark:border-gray-700 pb-4">
+                <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">E-Mail</label>
+                <p class="text-lg text-gray-900 dark:text-white">{{ user?.email }}</p>
+              </div>
+              <div class="pb-4">
+                <label class="block text-sm font-medium text-gray-500 dark:text-gray-400 mb-1">Rolle</label>
+                <p class="text-lg text-gray-900 dark:text-white">
+                  <span :class="[
+                    'px-3 py-1 text-sm font-semibold rounded',
+                    user?.is_admin 
+                      ? 'bg-purple-100 dark:bg-purple-900/50 text-purple-800 dark:text-purple-300'
+                      : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300'
+                  ]">
+                    {{ user?.is_admin ? 'Administrator' : 'Benutzer' }}
+                  </span>
+                </p>
+              </div>
+            </div>
+
+            <!-- Edit Mode -->
+            <form v-else @submit.prevent="submitProfileUpdate" class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Name
+                </label>
+                <input
+                  v-model="profileForm.name"
+                  type="text"
+                  required
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  placeholder="Dein Name"
+                />
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  E-Mail
+                </label>
+                <input
+                  v-model="profileForm.email"
+                  type="email"
+                  required
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  placeholder="deine@email.de"
+                />
+              </div>
+
+              <div v-if="profileError" class="p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-md">
+                <p class="text-sm text-red-600 dark:text-red-400">{{ profileError }}</p>
+              </div>
+
+              <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 pt-4">
+                <button
+                  type="button"
+                  @click="cancelEditProfile"
+                  class="w-full sm:w-auto px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+                >
+                  Abbrechen
+                </button>
+                <button
+                  type="submit"
+                  :disabled="profileLoading || !isProfileFormValid"
+                  class="w-full sm:w-auto px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition font-medium"
+                >
+                  {{ profileLoading ? 'Speichert...' : 'Speichern' }}
+                </button>
+              </div>
+            </form>
+          </div>
+
+          <!-- Password Change Section -->
+          <div class="bg-white dark:bg-gray-800 rounded-lg shadow-lg p-6 mt-6">
+            <div class="flex items-center justify-between mb-6">
+              <h2 class="text-2xl font-bold text-gray-900 dark:text-white">Passwort ändern</h2>
+              <button
+                v-if="!isEditingPassword"
+                @click="startEditPassword"
+                class="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition text-sm font-medium"
+              >
+                Passwort ändern
+              </button>
+            </div>
+
+            <!-- View Mode -->
+            <div v-if="!isEditingPassword" class="text-gray-600 dark:text-gray-400">
+              <p class="text-sm">Klicke auf "Passwort ändern", um dein Passwort zu aktualisieren.</p>
+            </div>
+
+            <!-- Edit Mode -->
+            <form v-else @submit.prevent="submitPasswordUpdate" class="space-y-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Aktuelles Passwort
+                </label>
+                <input
+                  v-model="passwordForm.currentPassword"
+                  type="password"
+                  required
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  placeholder="Aktuelles Passwort"
+                />
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Neues Passwort
+                </label>
+                <input
+                  v-model="passwordForm.newPassword"
+                  type="password"
+                  required
+                  minlength="8"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  placeholder="Neues Passwort (min. 8 Zeichen)"
+                />
+                <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+                  Mindestens 8 Zeichen
+                </p>
+              </div>
+
+              <div>
+                <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  Neues Passwort bestätigen
+                </label>
+                <input
+                  v-model="passwordForm.confirmPassword"
+                  type="password"
+                  required
+                  minlength="8"
+                  class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md shadow-sm focus:ring-red-500 focus:border-red-500 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                  placeholder="Neues Passwort bestätigen"
+                />
+                <p v-if="passwordForm.newPassword && passwordForm.confirmPassword && passwordForm.newPassword !== passwordForm.confirmPassword" class="mt-1 text-xs text-red-600 dark:text-red-400">
+                  Passwörter stimmen nicht überein
+                </p>
+              </div>
+
+              <div v-if="passwordError" class="p-3 bg-red-50 dark:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-md">
+                <p class="text-sm text-red-600 dark:text-red-400">{{ passwordError }}</p>
+              </div>
+
+              <div class="flex flex-col-reverse sm:flex-row sm:justify-end gap-2 pt-4">
+                <button
+                  type="button"
+                  @click="cancelEditPassword"
+                  class="w-full sm:w-auto px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+                >
+                  Abbrechen
+                </button>
+                <button
+                  type="submit"
+                  :disabled="passwordLoading || !isPasswordFormValid"
+                  class="w-full sm:w-auto px-4 py-2 bg-red-600 text-white rounded-md hover:bg-red-700 disabled:opacity-50 disabled:cursor-not-allowed transition font-medium"
+                >
+                  {{ passwordLoading ? 'Speichert...' : 'Passwort ändern' }}
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       </div>
@@ -479,6 +673,39 @@ const leaveLoading = ref(false)
 // Archive collapse state - track each event individually
 const expandedArchiveEvents = ref(new Set())
 
+// Profile editing
+const isEditingProfile = ref(false)
+const profileForm = ref({
+  name: '',
+  email: ''
+})
+const profileError = ref('')
+const profileLoading = ref(false)
+
+const isProfileFormValid = computed(() => {
+  return profileForm.value.name.trim() !== '' && 
+         profileForm.value.email.trim() !== '' &&
+         (profileForm.value.name !== user.value?.name || profileForm.value.email !== user.value?.email)
+})
+
+// Password editing
+const isEditingPassword = ref(false)
+const passwordForm = ref({
+  currentPassword: '',
+  newPassword: '',
+  confirmPassword: ''
+})
+const passwordError = ref('')
+const passwordLoading = ref(false)
+
+const isPasswordFormValid = computed(() => {
+  return passwordForm.value.currentPassword.trim() !== '' &&
+         passwordForm.value.newPassword.trim() !== '' &&
+         passwordForm.value.newPassword.length >= 8 &&
+         passwordForm.value.confirmPassword.trim() !== '' &&
+         passwordForm.value.newPassword === passwordForm.value.confirmPassword
+})
+
 const toggleArchiveEvent = (eventId) => {
   if (expandedArchiveEvents.value.has(eventId)) {
     expandedArchiveEvents.value.delete(eventId)
@@ -636,6 +863,92 @@ const translateStatus = (status) => {
     'Closed': 'Geschlossen'
   }
   return translations[status] || status
+}
+
+const startEditProfile = () => {
+  profileForm.value = {
+    name: user.value?.name || '',
+    email: user.value?.email || ''
+  }
+  profileError.value = ''
+  isEditingProfile.value = true
+}
+
+const cancelEditProfile = () => {
+  isEditingProfile.value = false
+  profileError.value = ''
+}
+
+const submitProfileUpdate = async () => {
+  try {
+    profileLoading.value = true
+    profileError.value = ''
+    
+    const updateData = {}
+    if (profileForm.value.name !== user.value?.name) {
+      updateData.name = profileForm.value.name
+    }
+    if (profileForm.value.email !== user.value?.email) {
+      updateData.email = profileForm.value.email
+    }
+    
+    const updatedUser = await userAPI.updateProfile(updateData)
+    
+    // Update the user in localStorage and the composable
+    localStorage.setItem('user', JSON.stringify(updatedUser))
+    if (user.value) {
+      user.value.name = updatedUser.name
+      user.value.email = updatedUser.email
+    }
+    
+    isEditingProfile.value = false
+    showToast('Profil erfolgreich aktualisiert!', 'success')
+  } catch (error) {
+    profileError.value = error.response?.data?.detail || 'Fehler beim Aktualisieren des Profils'
+  } finally {
+    profileLoading.value = false
+  }
+}
+
+const startEditPassword = () => {
+  passwordForm.value = {
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  }
+  passwordError.value = ''
+  isEditingPassword.value = true
+}
+
+const cancelEditPassword = () => {
+  isEditingPassword.value = false
+  passwordError.value = ''
+  passwordForm.value = {
+    currentPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+  }
+}
+
+const submitPasswordUpdate = async () => {
+  try {
+    passwordLoading.value = true
+    passwordError.value = ''
+    
+    await userAPI.updatePassword(passwordForm.value.currentPassword, passwordForm.value.newPassword)
+    
+    isEditingPassword.value = false
+    passwordForm.value = {
+      currentPassword: '',
+      newPassword: '',
+      confirmPassword: ''
+    }
+    showToast('Passwort erfolgreich geändert!', 'success')
+  } catch (error) {
+    passwordError.value = error.response?.data?.detail || 'Fehler beim Ändern des Passworts'
+  } finally {
+    passwordLoading.value = false
+  }
 }
 </script>
 

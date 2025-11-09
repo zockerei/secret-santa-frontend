@@ -85,6 +85,19 @@ export const userAPI = {
     return response.data
   },
   
+  updateProfile: async (profileData) => {
+    const response = await api.put('/users/me', profileData)
+    return response.data
+  },
+  
+  updatePassword: async (currentPassword, newPassword) => {
+    const response = await api.put('/users/me/password', {
+      current_password: currentPassword,
+      new_password: newPassword
+    })
+    return response.data
+  },
+  
   getEvents: async () => {
     const response = await api.get('/users/events')
     return response.data

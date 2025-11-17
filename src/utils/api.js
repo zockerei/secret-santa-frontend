@@ -152,6 +152,13 @@ export const adminAPI = {
     return response.data
   },
   
+  updateUserPassword: async (userId, newPassword) => {
+    const response = await api.put(`/admin/users/${userId}/password`, {
+      new_password: newPassword
+    })
+    return response.data
+  },
+  
   deleteUser: async (userId) => {
     const response = await api.delete(`/admin/users/${userId}`)
     return response.data

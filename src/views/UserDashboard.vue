@@ -62,7 +62,7 @@
           <p class="text-gray-500 dark:text-gray-400">Lade Veranstaltungen...</p>
         </div>
 
-        <div v-else-if="events.length === 0" class="text-center py-12 bg-white dark:bg-gray-800 rounded-lg shadow">
+        <div v-else-if="activeEvents.length === 0" class="text-center py-12 bg-white dark:bg-gray-800 rounded-lg shadow">
           <div class="text-5xl mb-4">🎅</div>
           <p class="text-gray-500 dark:text-gray-300">Noch keine Veranstaltungen verfügbar.</p>
           <p class="text-sm text-gray-400 dark:text-gray-500 mt-2">Schau später nochmal vorbei oder kontaktiere deinen Admin!</p>
@@ -70,7 +70,7 @@
 
         <div v-else class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           <div
-            v-for="event in events"
+            v-for="event in activeEvents"
             :key="event.id"
             class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 hover:shadow-lg transition-all border border-transparent dark:border-gray-700"
           >
@@ -638,13 +638,18 @@ const loading = ref(false)
 const events = ref([])
 const assignments = ref([])
 
-// Computed properties for filtering assignments
+const activeEvents = computed(() => {
+  return events.value.filter(e => e.status !== 'Closed')
+})
+
 const activeAssignments = computed(() => {
   return assignments.value.filter(a => a.event_status === 'Assigned')
 })
 
 const archivedAssignments = computed(() => {
-  return assignments.value.filter(a => a.event_status === 'Closed')
+  return assignments.value
+    .filter(a => a.event_status === 'Closed')
+    .sort((a, b) => new Date(b.event_date) - new Date(a.event_date))
 })
 
 // Join event

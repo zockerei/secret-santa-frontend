@@ -21,6 +21,17 @@
             Events
           </button>
           <button
+            @click="activeTab = 'archive'"
+            :class="[
+              'whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors',
+              activeTab === 'archive'
+                ? 'border-red-500 text-red-600 dark:text-red-400'
+                : 'border-transparent text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300 hover:border-gray-300 dark:hover:border-gray-600'
+            ]"
+          >
+            Archive
+          </button>
+          <button
             @click="activeTab = 'users'"
             :class="[
               'whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm transition-colors',
@@ -58,7 +69,7 @@
 
         <div v-else class="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
           <div
-            v-for="event in events"
+            v-for="event in activeEvents"
             :key="event.id"
             class="bg-white dark:bg-gray-800 rounded-lg shadow p-6 hover:shadow-lg transition-all"
           >
@@ -132,6 +143,87 @@
               >
                 Delete
               </button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Archive Tab -->
+      <div v-if="activeTab === 'archive'" class="space-y-6">
+        <div class="flex justify-between items-center">
+          <h2 class="text-xl font-semibold text-gray-900 dark:text-white">Archived Events</h2>
+        </div>
+
+        <div v-if="loading" class="text-center py-12">
+          <p class="text-gray-500 dark:text-gray-400">Loading archived events...</p>
+        </div>
+
+        <div v-else-if="archivedEvents.length === 0" class="text-center py-12 bg-white dark:bg-gray-800 rounded-lg shadow">
+          <div class="text-5xl mb-4">📦</div>
+          <p class="text-gray-500 dark:text-gray-300">No archived events.</p>
+          <p class="text-sm text-gray-400 dark:text-gray-500 mt-2">Closed events will appear here.</p>
+        </div>
+
+        <div v-else class="space-y-4">
+          <div
+            v-for="event in archivedEvents"
+            :key="event.id"
+            class="bg-white dark:bg-gray-800 rounded-lg shadow-lg border-l-4 border-gray-400 dark:border-gray-600"
+          >
+            <!-- Collapsible Header -->
+            <button
+              @click="toggleArchiveEvent(event.id)"
+              class="w-full flex items-center justify-between p-6 text-left hover:bg-gray-50 dark:hover:bg-gray-700 transition rounded-lg"
+            >
+              <div class="flex-1">
+                <div class="flex items-start justify-between mb-2">
+                  <div>
+                    <h3 class="text-xl font-bold text-gray-900 dark:text-white">{{ event.event_name }}</h3>
+                    <p class="text-sm text-gray-500 dark:text-gray-400">{{ formatDate(event.date) }}</p>
+                  </div>
+                  <span class="px-3 py-1 bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-300 text-xs font-semibold rounded ml-4">
+                    Closed
+                  </span>
+                </div>
+                <p class="text-sm text-gray-600 dark:text-gray-400">
+                  <span class="font-medium">Participants:</span> {{ event.participant_count }}
+                </p>
+              </div>
+              <svg
+                :class="[
+                  'w-6 h-6 text-gray-500 dark:text-gray-400 transition-transform duration-200 ml-4 flex-shrink-0',
+                  expandedArchiveEvents.has(event.id) ? 'rotate-180' : ''
+                ]"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+              </svg>
+            </button>
+
+            <!-- Expandable Details -->
+            <div v-show="expandedArchiveEvents.has(event.id)" class="px-6 pb-6 space-y-4 border-t border-gray-200 dark:border-gray-700">
+              <div class="flex flex-wrap gap-2 pt-4">
+                <button
+                  @click="viewEventDetails(event.id)"
+                  class="text-sm px-3 py-1 bg-blue-50 dark:bg-blue-900/30 text-blue-600 dark:text-blue-400 rounded hover:bg-blue-100 dark:hover:bg-blue-900/50 transition"
+                >
+                  View Details
+                </button>
+                <button
+                  @click="reopenEvent(event.id)"
+                  class="text-sm px-3 py-1 bg-yellow-50 dark:bg-yellow-900/30 text-yellow-600 dark:text-yellow-400 rounded hover:bg-yellow-100 dark:hover:bg-yellow-900/50 transition"
+                >
+                  Reopen Event
+                </button>
+                <button
+                  @click="confirmDeleteEvent(event)"
+                  class="text-sm px-3 py-1 bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 rounded hover:bg-red-100 dark:hover:bg-red-900/50 transition"
+                >
+                  Delete
+                </button>
+              </div>
             </div>
           </div>
         </div>
@@ -297,6 +389,21 @@
               minlength="8"
               class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
             />
+          </div>
+          <div v-else>
+            <label class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+              Change Password (optional)
+            </label>
+            <input
+              v-model="newUser.password"
+              type="password"
+              minlength="8"
+              placeholder="Leave empty to keep current password"
+              class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-red-500"
+            />
+            <p class="mt-1 text-xs text-gray-500 dark:text-gray-400">
+              Enter a new password (min. 8 characters) or leave empty to keep current password
+            </p>
           </div>
           <div class="flex items-center">
             <input
@@ -746,6 +853,7 @@ const loading = ref(false)
 const events = ref([])
 const users = ref([])
 const selectedEvent = ref(null)
+const expandedArchiveEvents = ref(new Set())
 
 // Event modals
 const showCreateEventModal = ref(false)
@@ -810,6 +918,23 @@ const availableUsers = computed(() => {
   const participantIds = selectedEvent.value.participants.map(p => p.user_id)
   return users.value.filter(u => !participantIds.includes(u.id))
 })
+
+const activeEvents = computed(() => {
+  return events.value.filter(e => e.status !== 'Closed')
+})
+
+const archivedEvents = computed(() => {
+  return events.value.filter(e => e.status === 'Closed')
+    .sort((a, b) => new Date(b.date) - new Date(a.date)) // Newest first
+})
+
+const toggleArchiveEvent = (eventId) => {
+  if (expandedArchiveEvents.value.has(eventId)) {
+    expandedArchiveEvents.value.delete(eventId)
+  } else {
+    expandedArchiveEvents.value.add(eventId)
+  }
+}
 
 const getAvailableRecipients = (gifterId) => {
   if (!manualAssignmentEvent.value?.participants) return []
@@ -905,11 +1030,18 @@ const saveUser = async () => {
     userError.value = ''
     
     if (editingUser.value) {
+      // Update user details
       await adminAPI.updateUser(editingUser.value.id, {
         name: newUser.value.name,
         email: newUser.value.email,
         is_admin: newUser.value.is_admin
       })
+      
+      // Update password separately if provided
+      if (newUser.value.password && newUser.value.password.trim() !== '') {
+        await adminAPI.updateUserPassword(editingUser.value.id, newUser.value.password)
+      }
+      
       showToast('User updated successfully!', 'success')
     } else {
       await adminAPI.createUser(newUser.value)

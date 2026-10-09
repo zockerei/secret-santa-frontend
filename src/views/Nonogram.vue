@@ -1,11 +1,13 @@
 <template>
   <div class="page">
-    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <!-- Extra room at the top so the title isn't crowded by the lights hanging off the navbar -->
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
       <header class="text-center mb-6">
         <h1 class="text-3xl sm:text-4xl font-bold text-gray-900 dark:text-white">🧩 Nonogramm</h1>
         <p class="mt-2 text-gray-600 dark:text-gray-300 max-w-xl mx-auto">
           Die Zahlen sagen, wie viele Felder in einer Zeile oder Spalte zusammenhängend ausgemalt sind. Findest du das Bild?
         </p>
+        <button type="button" class="btn btn-secondary mt-4" @click="showHelp = true">📖 Anleitung</button>
       </header>
 
       <div class="card p-4 sm:p-6">
@@ -137,11 +139,77 @@
         </p>
       </div>
     </div>
+
+    <Modal v-if="showHelp" size="large" @close="showHelp = false">
+      <template #title>📖 So funktioniert ein Nonogramm</template>
+      <template #content>
+        <div class="space-y-5 text-sm sm:text-base text-gray-700 dark:text-gray-200">
+          <section>
+            <h4 class="font-semibold text-gray-900 dark:text-white mb-1">Das Ziel</h4>
+            <p>
+              Im Gitter ist ein Bild versteckt. Male die richtigen Felder aus, bis es fertig ist.
+              Bei einem Weihnachtsmotiv erscheint am Ende das Bild in Farbe und sein Name.
+            </p>
+          </section>
+
+          <section>
+            <h4 class="font-semibold text-gray-900 dark:text-white mb-1">Die Zahlen</h4>
+            <p>
+              Links stehen die Zahlen für jede Zeile, oben die für jede Spalte. Jede Zahl ist ein Block aus so vielen
+              ausgemalten Feldern direkt nebeneinander, in genau dieser Reihenfolge.
+              Zwischen zwei Blöcken ist immer mindestens ein leeres Feld.
+            </p>
+            <p class="mt-2">
+              Beispiel: <strong>3 1</strong> heißt drei ausgemalte Felder am Stück, dann mindestens eine Lücke,
+              dann ein einzelnes Feld. Eine <strong>0</strong> heißt, dass die ganze Reihe leer bleibt.
+            </p>
+            <div class="mt-3 flex items-center gap-3 font-mono">
+              <span class="font-semibold">3 1</span>
+              <span class="help-row">
+                <span class="filled"></span><span class="filled"></span><span class="filled"></span><span></span><span></span><span class="filled"></span><span></span>
+              </span>
+            </div>
+          </section>
+
+          <section>
+            <h4 class="font-semibold text-gray-900 dark:text-white mb-1">Bedienung</h4>
+            <ul class="list-disc pl-5 space-y-1">
+              <li><strong>Linksklick</strong> oder Tippen malt ein Feld aus, nochmal klicken macht es wieder leer.</li>
+              <li>
+                <strong>Rechtsklick</strong> setzt ein ✕ in ein Feld, das sicher leer bleibt. Auf dem Handy schaltest du dafür
+                oben auf <strong>✕ Markieren</strong> um.
+              </li>
+              <li><strong>Gedrückt halten und ziehen</strong> malt mehrere Felder einer Zeile oder Spalte auf einmal.</li>
+              <li>Ist eine Zeile oder Spalte erfüllt, werden ihre Zahlen blass.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h4 class="font-semibold text-gray-900 dark:text-white mb-1">Tipps</h4>
+            <ul class="list-disc pl-5 space-y-1">
+              <li>Fang mit großen Zahlen an. Eine 8 in einer Zeile mit 10 Feldern überdeckt auf jeden Fall die mittleren 6.</li>
+              <li>Ergeben die Zahlen samt Lücken genau die Länge der Reihe, steht sie schon komplett fest.</li>
+              <li>Setze ✕ in Felder, die sicher leer sind. Das hilft bei den Spalten, die sie kreuzen.</li>
+              <li>Raten ist nie nötig: Jedes Rätsel hat genau eine Lösung, die man Schritt für Schritt herausfinden kann.</li>
+            </ul>
+          </section>
+
+          <section>
+            <h4 class="font-semibold text-gray-900 dark:text-white mb-1">Die zwei Modi</h4>
+            <ul class="list-disc pl-5 space-y-1">
+              <li><strong>🎄 Weihnachtsmotiv:</strong> ein weihnachtliches Bild. Was es ist, verrät es erst, wenn du fertig bist.</li>
+              <li><strong>🎲 Zufällig:</strong> ein zufälliges Muster in der Größe, die du einstellst, von 3 × 3 bis 15 × 15.</li>
+            </ul>
+          </section>
+        </div>
+      </template>
+    </Modal>
   </div>
 </template>
 
 <script setup>
 import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
+import Modal from '../components/Modal.vue'
 import {
   CHRISTMAS_PUZZLES,
   christmasPuzzle,
@@ -179,6 +247,7 @@ const puzzle = ref(null)
 const cells = ref([])
 const solved = ref(false)
 const hover = ref(null)
+const showHelp = ref(false)
 
 // Timer, starts with the first click
 
@@ -514,6 +583,37 @@ function solvedStyle(i) {
   .solved .cell {
     transition: none;
   }
+}
+
+.help-row {
+  display: inline-flex;
+  border: 2px solid #6b7280;
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.help-row span {
+  width: 1.5rem;
+  height: 1.5rem;
+  border-right: 1px solid #d1d5db;
+  background-color: #ffffff;
+}
+
+.help-row span:last-child {
+  border-right: none;
+}
+
+.help-row span.filled {
+  background-color: #1f2937;
+}
+
+.dark .help-row span {
+  border-color: #4b5563;
+  background-color: #1f2937;
+}
+
+.dark .help-row span.filled {
+  background-color: #e5e7eb;
 }
 
 .pop-enter-active {

@@ -3,17 +3,91 @@
 
 export const COLORS = {
   G: '#16a34a', // green
-  D: '#166534', // dark green
   R: '#dc2626', // red
   Y: '#facc15', // gold
   O: '#f97316', // orange
   B: '#a16207', // brown
+  T: '#d6a46c', // antlers
+  P: '#fcd5b0', // skin
   W: '#f1f5f9', // snow
   C: '#7dd3fc' // ice
 }
 
 // '.' is an empty cell, every letter a filled cell in that color (only shown once the puzzle is solved)
 export const CHRISTMAS_PUZZLES = [
+  // Leicht (the solver rates them, see DIFFICULTIES)
+  {
+    name: 'Geschenk',
+    emoji: '🎁',
+    picture: [
+      '..Y.....Y..',
+      '.YYY...YYY.',
+      '..YYY.YYY..',
+      '....YYY....',
+      'RRRRRYRRRRR',
+      'RRRRRYRRRRR',
+      'YYYYYYYYYYY',
+      'RRRRRYRRRRR',
+      'RRRRRYRRRRR',
+      'RRRRRYRRRRR',
+      'RRRRRYRRRRR'
+    ]
+  },
+  {
+    name: 'Glocke',
+    emoji: '🔔',
+    picture: [
+      '...RR.RR...',
+      '....RRR....',
+      '....YYY....',
+      '...YYYYY...',
+      '..YYYYYYY..',
+      '..YYYYYYY..',
+      '..YYYYYYY..',
+      '..YYYYYYY..',
+      '.YYYYYYYYY.',
+      'YYYYYYYYYYY',
+      'YYYYYYYYYYY',
+      '.....B.....',
+      '....BBB....'
+    ]
+  },
+  {
+    name: 'Kerze',
+    emoji: '🕯️',
+    picture: [
+      '....O....',
+      '...OYO...',
+      '...OYO...',
+      '....O....',
+      '....B....',
+      '..RRRRR..',
+      '..RRRRR..',
+      '..RRRRR..',
+      '..RRRRR..',
+      '..RRRRR..',
+      '..RRRRR..',
+      '.YYYYYYY.',
+      'YYYYYYYYY'
+    ]
+  },
+  {
+    name: 'Weihnachtsmannmütze',
+    emoji: '🎅',
+    picture: [
+      '.........WW.',
+      '.......RRWW.',
+      '.....RRRR...',
+      '....RRRRR...',
+      '...RRRRRR...',
+      '..RRRRRRRR..',
+      '..RRRRRRRR..',
+      '.RRRRRRRRRR.',
+      'WWWWWWWWWWWW',
+      'WWWWWWWWWWWW'
+    ]
+  },
+  // Mittel (the solver rates them, see DIFFICULTIES)
   {
     name: 'Tannenbaum',
     emoji: '🎄',
@@ -53,23 +127,6 @@ export const CHRISTMAS_PUZZLES = [
     ]
   },
   {
-    name: 'Geschenk',
-    emoji: '🎁',
-    picture: [
-      '..Y.....Y..',
-      '.YYY...YYY.',
-      '..YYY.YYY..',
-      '....YYY....',
-      'RRRRRYRRRRR',
-      'RRRRRYRRRRR',
-      'YYYYYYYYYYY',
-      'RRRRRYRRRRR',
-      'RRRRRYRRRRR',
-      'RRRRRYRRRRR',
-      'RRRRRYRRRRR'
-    ]
-  },
-  {
     name: 'Zuckerstange',
     emoji: '🍬',
     picture: [
@@ -85,112 +142,6 @@ export const CHRISTMAS_PUZZLES = [
       '.......WR.',
       '.......RW.',
       '.......WR.'
-    ]
-  },
-  {
-    name: 'Stern',
-    emoji: '⭐',
-    picture: [
-      '.....Y.....',
-      '....YYY....',
-      '....YYY....',
-      'YYYYYYYYYYY',
-      '.YYYYYYYYY.',
-      '..YYYYYYY..',
-      '...YYYYY...',
-      '..YYYYYYY..',
-      '..YYY.YYY..',
-      '.YY.....YY.',
-      '.Y.......Y.'
-    ]
-  },
-  {
-    name: 'Glocke',
-    emoji: '🔔',
-    picture: [
-      '...RR.RR...',
-      '....RRR....',
-      '....YYY....',
-      '...YYYYY...',
-      '..YYYYYYY..',
-      '..YYYYYYY..',
-      '..YYYYYYY..',
-      '..YYYYYYY..',
-      '.YYYYYYYYY.',
-      'YYYYYYYYYYY',
-      'YYYYYYYYYYY',
-      '.....B.....',
-      '....BBB....'
-    ]
-  },
-  {
-    name: 'Christbaumkugel',
-    emoji: '🔴',
-    picture: [
-      '.....Y.....',
-      '....Y.Y....',
-      '....YYY....',
-      '..RRRRRRR..',
-      '.RRRRRRRRR.',
-      '.RRRRRRRRR.',
-      'Y.Y.Y.Y.Y.Y',
-      'RRRRRRRRRRR',
-      '.Y.Y.Y.Y.Y.',
-      '.RRRRRRRRR.',
-      '..RRRRRRR..',
-      '...RRRRR...'
-    ]
-  },
-  {
-    name: 'Schneeflocke',
-    emoji: '❄️',
-    picture: [
-      '.....C.....',
-      '..C..C..C..',
-      '.CCC.C.CCC.',
-      '..CCC.CCC..',
-      '...C.C.C...',
-      'CCC.CCC.CCC',
-      '...C.C.C...',
-      '..CCC.CCC..',
-      '.CCC.C.CCC.',
-      '..C..C..C..',
-      '.....C.....'
-    ]
-  },
-  {
-    name: 'Kerze',
-    emoji: '🕯️',
-    picture: [
-      '....O....',
-      '...OYO...',
-      '...OYO...',
-      '....O....',
-      '....B....',
-      '..RRRRR..',
-      '..RRRRR..',
-      '..RRRRR..',
-      '..RRRRR..',
-      '..RRRRR..',
-      '..RRRRR..',
-      '.YYYYYYY.',
-      'YYYYYYYYY'
-    ]
-  },
-  {
-    name: 'Weihnachtsmannmütze',
-    emoji: '🎅',
-    picture: [
-      '.........WW.',
-      '.......RRWW.',
-      '.....RRRR...',
-      '....RRRRR...',
-      '...RRRRRR...',
-      '..RRRRRRRR..',
-      '..RRRRRRRR..',
-      '.RRRRRRRRRR.',
-      'WWWWWWWWWWWW',
-      'WWWWWWWWWWWW'
     ]
   },
   {
@@ -212,38 +163,76 @@ export const CHRISTMAS_PUZZLES = [
       '.BBB...BBB.'
     ]
   },
+  // Schwer (the solver rates them, see DIFFICULTIES)
   {
-    name: 'Lebkuchenhaus',
-    emoji: '🏠',
+    name: 'Stern',
+    emoji: '⭐',
     picture: [
-      '.....WW.....',
-      '....WRRW....',
-      '...WRRRRW...',
-      '..WRRRRRRW..',
-      '.WRRRRRRRRW.',
-      'WWWWWWWWWWWW',
-      '.BBBBBBBBBB.',
-      '.B..BBBB..B.',
-      '.B..B..B..B.',
-      '.BBBB..BBBB.',
-      '.BBBB..BBBB.'
+      '.....Y.....',
+      '....YYY....',
+      '....YYY....',
+      'YYYYYYYYYYY',
+      '.YYYYYYYYY.',
+      '..YYYYYYY..',
+      '...YYYYY...',
+      '..YYYYYYY..',
+      '..YYY.YYY..',
+      '.YY.....YY.',
+      '.Y.......Y.'
     ]
   },
   {
-    name: 'Nikolausstiefel',
-    emoji: '🥾',
+    name: 'Rentier',
+    emoji: '🦌',
     picture: [
-      '.WWWWWW...',
-      '.WWWWWW...',
-      '.RRRRRR...',
-      '.RRRRRR...',
-      '.RRRRRR...',
-      '.RRRRRR...',
-      '.RRRRRR...',
-      '.RRRRRRR..',
-      '.RRRRRRRRR',
-      '.RRRRRRRRR',
-      '..RRRRRRRR'
+      'T.T.T...T.T.T',
+      'TTTT.....TTTT',
+      '..T.......T..',
+      '..TT.....TT..',
+      '...T.....T...',
+      '....BBBBB....',
+      'BB.BBBBBBB.BB',
+      '.BBB.BBB.BBB.',
+      '....BBBBB....',
+      '....BBBBB....',
+      '....BBBBB....',
+      '.....RRR.....',
+      '.....RRR.....'
+    ]
+  },
+  {
+    name: 'Schneeflocke',
+    emoji: '❄️',
+    picture: [
+      '....C.C....',
+      '.C...C...C.',
+      'C.C..C..C.C',
+      '.C.CCCCC.C.',
+      '...CC.CC...',
+      '..CC.C.CC..',
+      '...CC.CC...',
+      '.C.CCCCC.C.',
+      'C.C..C..C.C',
+      '.C...C...C.',
+      '....C.C....'
+    ]
+  },
+  {
+    name: 'Engel',
+    emoji: '👼',
+    picture: [
+      '....YYYYY....',
+      '.............',
+      '.....PPP.....',
+      'C....PPP....C',
+      'CC....W....CC',
+      'C.C.WWWWW.C.C',
+      'CC.WWWWWWW.CC',
+      '.C..WWWWW..C.',
+      '....W.W.W....',
+      '...WWWWWWW...',
+      '...W.W.W.W...',
+      '..WWWWWWWWW..'
     ]
   }
 ]
@@ -315,11 +304,15 @@ function solveLine(clue, known) {
   return common
 }
 
-// Solves line by line until nothing changes; true if that fills in the whole grid
-export function isLineSolvable(rowClues, colClues) {
+// Solves line by line, alternating sweeps over all rows and all columns until nothing changes.
+// Returns null if that doesn't fill in the whole grid (guessing would be needed), otherwise how hard it was:
+// how many sweeps it took and how much of the grid was already certain after the first sweep
+export function lineSolve(rowClues, colClues) {
   const rows = rowClues.length
   const cols = colClues.length
   const grid = new Array(rows * cols).fill(-1)
+  let sweeps = 0
+  let firstSweepKnown = 0
   let changed = true
 
   while (changed) {
@@ -327,7 +320,7 @@ export function isLineSolvable(rowClues, colClues) {
     for (let r = 0; r < rows; r++) {
       const known = grid.slice(r * cols, (r + 1) * cols)
       const result = solveLine(rowClues[r], known)
-      if (!result) return false
+      if (!result) return null
       for (let c = 0; c < cols; c++) {
         if (known[c] === -1 && result[c] !== -1) {
           grid[r * cols + c] = result[c]
@@ -338,7 +331,7 @@ export function isLineSolvable(rowClues, colClues) {
     for (let c = 0; c < cols; c++) {
       const known = Array.from({ length: rows }, (_, r) => grid[r * cols + c])
       const result = solveLine(colClues[c], known)
-      if (!result) return false
+      if (!result) return null
       for (let r = 0; r < rows; r++) {
         if (known[r] === -1 && result[r] !== -1) {
           grid[r * cols + c] = result[r]
@@ -346,8 +339,26 @@ export function isLineSolvable(rowClues, colClues) {
         }
       }
     }
+    if (changed) sweeps++
+    if (sweeps === 1 && changed) firstSweepKnown = grid.filter((cell) => cell !== -1).length / grid.length
   }
-  return !grid.includes(-1)
+  return grid.includes(-1) ? null : { sweeps, firstSweepKnown }
+}
+
+// How hard a puzzle is: the less is certain after the first sweep and the more sweeps it takes, the harder.
+// Hard puzzles also need sparse grids: lots of small numbers give no foothold, big blocks almost solve themselves
+export const DIFFICULTIES = [
+  { id: 'easy', label: 'Leicht', maxScore: 0.35, density: [0.65, 0.75] },
+  { id: 'medium', label: 'Mittel', maxScore: 0.7, density: [0.52, 0.62] },
+  { id: 'hard', label: 'Schwer', maxScore: Infinity, density: [0.4, 0.5] }
+]
+
+function difficultyScore({ sweeps, firstSweepKnown }) {
+  return 1 - firstSweepKnown + 0.08 * (sweeps - 1)
+}
+
+function difficultyOf(score) {
+  return DIFFICULTIES.find((level) => score < level.maxScore).id
 }
 
 export function christmasPuzzle(index) {
@@ -355,26 +366,45 @@ export function christmasPuzzle(index) {
   const rows = picture.length
   const cols = picture[0].length
   const letters = picture.join('').split('')
+  const solution = letters.map((letter) => letter !== '.')
+  const { rowClues, colClues } = cluesOf(solution, rows, cols)
   return {
     rows,
     cols,
     name,
     emoji,
-    solution: letters.map((letter) => letter !== '.'),
+    difficulty: difficultyOf(difficultyScore(lineSolve(rowClues, colClues))),
+    solution,
     colors: letters.map((letter) => COLORS[letter] ?? null)
   }
 }
 
-// A random picture that can be solved without guessing; colored from red over gold to green once solved
-export function randomPuzzle(rows, cols) {
-  let solution
-  for (let attempt = 0; attempt < 300; attempt++) {
-    const density = 0.5 + Math.random() * 0.15
-    solution = Array.from({ length: rows * cols }, () => Math.random() < density)
+// A random picture of the wanted difficulty that can be solved without guessing; colored from red over gold
+// to green once solved. Small grids can't get very hard, then it settles for the closest one it found
+export function randomPuzzle(rows, cols, difficulty) {
+  const level = DIFFICULTIES.findIndex((entry) => entry.id === difficulty)
+  const minScore = level > 0 ? DIFFICULTIES[level - 1].maxScore : 0
+  const maxScore = DIFFICULTIES[level].maxScore
+  const [minDensity, maxDensity] = DIFFICULTIES[level].density
+  const deadline = Date.now() + 200
+  let best = null
+
+  for (let attempt = 0; attempt < 2000 || !best; attempt++) {
+    // Fall back to fuller grids if the sparse ones keep needing guesses
+    const density = best || Date.now() < deadline ? minDensity + Math.random() * (maxDensity - minDensity) : 0.7
+    const solution = Array.from({ length: rows * cols }, () => Math.random() < density)
     if (!solution.some(Boolean)) continue
     const { rowClues, colClues } = cluesOf(solution, rows, cols)
-    if (isLineSolvable(rowClues, colClues)) break
+    const result = lineSolve(rowClues, colClues)
+    if (!result) continue
+
+    const score = difficultyScore(result)
+    const distance = Math.max(0, minScore - score, score - maxScore + 1e-9)
+    if (!best || distance < best.distance) best = { solution, score, distance }
+    if (distance === 0 || Date.now() > deadline) break
   }
+
+  const solution = best.solution
   const festive = ['#dc2626', '#f97316', '#facc15', '#22c55e', '#16a34a']
   const span = Math.max(1, rows + cols - 2)
   return {
@@ -382,6 +412,7 @@ export function randomPuzzle(rows, cols) {
     cols,
     name: null,
     emoji: null,
+    difficulty: difficultyOf(best.score),
     solution,
     colors: solution.map((_, i) => festive[Math.round(((Math.floor(i / cols) + (i % cols)) / span) * (festive.length - 1))])
   }

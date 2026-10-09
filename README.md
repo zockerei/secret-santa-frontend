@@ -52,4 +52,4 @@ Pages are only loaded when they are opened, so the home page doesn't download th
 ## Notes
 
 - The Christmas Cannon (`src/christmasCannon.js`) builds its room and everything it fires from code with three.js and cannon-es, so it needs no model files or CDNs.
-- Every nonogram (the Christmas pictures and the random ones) is checked by a line solver, so it has exactly one solution and can be solved without guessing. New pictures go in `CHRISTMAS_PUZZLES` in `src/nonogram.js`.
+- Every nonogram (the Christmas pictures and the random ones) is checked by a line solver, so it has exactly one solution and can be solved without guessing. The solver also rates how hard a puzzle is (how much is certain after the first pass over all lines and how many passes it takes), which drives the Leicht / Mittel / Schwer setting. New pictures go in `CHRISTMAS_PUZZLES` in `src/nonogram.js`; there are four per difficulty, so check where a new one lands.

@@ -25,19 +25,36 @@
             </button>
           </div>
 
-          <div class="flex flex-wrap items-center gap-2">
-            <template v-if="mode === 'random'">
-              <select v-model.number="width" class="input w-auto! py-1.5! text-sm" aria-label="Breite">
-                <option v-for="n in sizes" :key="n" :value="n">{{ n }}</option>
-              </select>
-              <span class="text-gray-500 dark:text-gray-400">×</span>
-              <select v-model.number="height" class="input w-auto! py-1.5! text-sm" aria-label="Höhe">
-                <option v-for="n in sizes" :key="n" :value="n">{{ n }}</option>
-              </select>
-            </template>
-            <button type="button" class="btn btn-primary" @click="newPuzzle">
-              {{ mode === 'christmas' ? 'Neues Motiv' : 'Neues Rätsel' }}
-            </button>
+          <button type="button" class="btn btn-primary" @click="newPuzzle">
+            {{ mode === 'christmas' ? 'Neues Motiv' : 'Neues Rätsel' }}
+          </button>
+        </div>
+
+        <!-- Settings -->
+        <div class="mt-4 flex flex-wrap items-center gap-x-6 gap-y-3">
+          <div class="flex items-center gap-2">
+            <span class="text-sm text-gray-600 dark:text-gray-300">Schwierigkeit</span>
+            <div class="inline-flex rounded-lg bg-gray-100 dark:bg-gray-700 p-1">
+              <button
+                v-for="level in DIFFICULTIES"
+                :key="level.id"
+                type="button"
+                :class="[segmentClasses, difficulty === level.id ? segmentActive : segmentInactive]"
+                @click="difficulty = level.id"
+              >
+                {{ level.label }}
+              </button>
+            </div>
+          </div>
+          <div v-if="mode === 'random'" class="flex items-center gap-2">
+            <span class="text-sm text-gray-600 dark:text-gray-300">Größe</span>
+            <select v-model.number="width" class="input w-auto! py-1.5! text-sm" aria-label="Breite">
+              <option v-for="n in sizes" :key="n" :value="n">{{ n }}</option>
+            </select>
+            <span class="text-gray-500 dark:text-gray-400">×</span>
+            <select v-model.number="height" class="input w-auto! py-1.5! text-sm" aria-label="Höhe">
+              <option v-for="n in sizes" :key="n" :value="n">{{ n }}</option>
+            </select>
           </div>
         </div>
 
@@ -60,6 +77,7 @@
             <span class="text-sm text-gray-500 dark:text-gray-400">
               {{ puzzle.name && solved ? `${puzzle.name} ${puzzle.emoji}` : `${puzzle.cols} × ${puzzle.rows}` }}
             </span>
+            <span class="badge" :class="difficultyBadge.classes">{{ difficultyBadge.label }}</span>
             <span class="font-mono text-sm tabular-nums text-gray-700 dark:text-gray-200">⏱ {{ formatTime(elapsed) }}</span>
             <button type="button" class="btn btn-secondary" :disabled="solved || !cells.some(Boolean)" @click="reset">
               Zurücksetzen
@@ -180,7 +198,11 @@
                 oben auf <strong>✕ Markieren</strong> um.
               </li>
               <li><strong>Gedrückt halten und ziehen</strong> malt mehrere Felder einer Zeile oder Spalte auf einmal.</li>
-              <li>Ist eine Zeile oder Spalte erfüllt, werden ihre Zahlen blass.</li>
+              <li>
+                Passen die ausgemalten Felder einer Zeile oder Spalte zu ihren Zahlen, werden die Zahlen blass.
+                <strong>Achtung:</strong> Das heißt nicht, dass die Reihe richtig ist. Die Blöcke können trotzdem an der
+                falschen Stelle sein, dann passt es später mit den kreuzenden Reihen nicht.
+              </li>
             </ul>
           </section>
 
@@ -197,9 +219,25 @@
           <section>
             <h4 class="font-semibold text-gray-900 dark:text-white mb-1">Die zwei Modi</h4>
             <ul class="list-disc pl-5 space-y-1">
-              <li><strong>🎄 Weihnachtsmotiv:</strong> ein weihnachtliches Bild. Was es ist, verrät es erst, wenn du fertig bist.</li>
+              <li>
+                <strong>🎄 Weihnachtsmotiv:</strong> ein weihnachtliches Bild. Was es ist, verrät es erst, wenn du fertig bist.
+                Es gibt vier Motive pro Schwierigkeit.
+              </li>
               <li><strong>🎲 Zufällig:</strong> ein zufälliges Muster in der Größe, die du einstellst, von 3 × 3 bis 15 × 15.</li>
             </ul>
+          </section>
+
+          <section>
+            <h4 class="font-semibold text-gray-900 dark:text-white mb-1">Schwierigkeit</h4>
+            <p>
+              Schwerer wird ein Rätsel nicht nur durch seine Größe. Leichte Rätsel haben viele große Zahlen, mit denen
+              gleich am Anfang ein großer Teil feststeht. Schwere Rätsel haben viele kleine Zahlen: Am Anfang steht kaum
+              etwas fest und du musst öfter zwischen Zeilen und Spalten hin und her überlegen.
+            </p>
+            <p class="mt-2">
+              Die Schwierigkeit wählst du in beiden Modi selbst. Ganz kleine zufällige Gitter wie 3 × 3 können nicht
+              schwer werden, dann zeigt das Abzeichen neben der Größe, wie schwer das Rätsel wirklich ist.
+            </p>
           </section>
         </div>
       </template>
@@ -212,6 +250,7 @@ import { ref, computed, watch, onMounted, onBeforeUnmount } from 'vue'
 import Modal from '../components/Modal.vue'
 import {
   CHRISTMAS_PUZZLES,
+  DIFFICULTIES,
   christmasPuzzle,
   randomPuzzle,
   cluesOf,
@@ -240,8 +279,9 @@ const segmentInactive = 'text-gray-600 dark:text-gray-300 hover:text-gray-900 da
 
 const mode = ref('christmas')
 const tool = ref('fill')
-const width = ref(5)
-const height = ref(5)
+const difficulty = ref('medium')
+const width = ref(10)
+const height = ref(10)
 
 const puzzle = ref(null)
 const cells = ref([])
@@ -271,15 +311,26 @@ function stopTimer() {
 const formatTime = (seconds) =>
   `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`
 
-// Christmas pictures come in random order, none twice until all were shown
-let unseen = []
-function nextChristmasIndex() {
-  if (unseen.length === 0) unseen = CHRISTMAS_PUZZLES.map((_, i) => i)
-  return unseen.splice(Math.floor(Math.random() * unseen.length), 1)[0]
+// Christmas pictures of the chosen difficulty come in random order, none twice until all of them were shown
+const christmasLevels = CHRISTMAS_PUZZLES.map((_, i) => christmasPuzzle(i).difficulty)
+const unseen = {}
+let lastChristmasIndex = null
+
+function nextChristmasIndex(level) {
+  if (!unseen[level]?.length) {
+    unseen[level] = christmasLevels.flatMap((entry, i) => (entry === level ? [i] : []))
+    // A new round shouldn't start with the picture that was just solved
+    if (unseen[level].length > 1) unseen[level] = unseen[level].filter((i) => i !== lastChristmasIndex)
+  }
+  lastChristmasIndex = unseen[level].splice(Math.floor(Math.random() * unseen[level].length), 1)[0]
+  return lastChristmasIndex
 }
 
 function newPuzzle() {
-  puzzle.value = mode.value === 'christmas' ? christmasPuzzle(nextChristmasIndex()) : randomPuzzle(height.value, width.value)
+  puzzle.value =
+    mode.value === 'christmas'
+      ? christmasPuzzle(nextChristmasIndex(difficulty.value))
+      : randomPuzzle(height.value, width.value, difficulty.value)
   reset()
 }
 
@@ -290,8 +341,18 @@ function reset() {
   elapsed.value = 0
 }
 
-watch([mode, width, height], newPuzzle)
+watch([mode, difficulty, width, height], newPuzzle)
 newPuzzle()
+
+const badgeClasses = {
+  easy: 'bg-green-100 dark:bg-green-900/50 text-green-800 dark:text-green-300',
+  medium: 'bg-amber-100 dark:bg-amber-900/50 text-amber-800 dark:text-amber-300',
+  hard: 'bg-red-100 dark:bg-red-900/50 text-red-800 dark:text-red-300'
+}
+const difficultyBadge = computed(() => ({
+  label: DIFFICULTIES.find((level) => level.id === puzzle.value.difficulty).label,
+  classes: badgeClasses[puzzle.value.difficulty]
+}))
 
 const clues = computed(() => cluesOf(puzzle.value.solution, puzzle.value.rows, puzzle.value.cols))
 

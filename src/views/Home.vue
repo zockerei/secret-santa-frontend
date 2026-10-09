@@ -1,25 +1,25 @@
 <template>
   <div class="min-h-screen bg-linear-to-b from-red-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-x-hidden" style="min-height: 100vh; min-height: 100dvh;">
     <!-- SVG Filters for Electric Border - Disabled on mobile for performance -->
-    <svg class="absolute w-0 h-0" :class="{ 'mobile-hidden': true }">
+    <svg class="absolute w-0 h-0">
       <defs>
+        <!-- Two noise sources (one per seed) shared by all offsets; octaves beyond 4 are sub-pixel and only cost time -->
         <filter id="electric-displace" colorInterpolationFilters="sRGB" x="-20%" y="-20%" width="140%" height="140%">
-          <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise1" seed="1" />
+          <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="4" result="noise1" seed="1" />
+          <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="4" result="noise2" seed="2" />
+
           <feOffset in="noise1" dx="0" dy="0" result="offsetNoise1">
             <animate attributeName="dy" values="700; 0" dur="6s" repeatCount="indefinite" calcMode="linear" />
           </feOffset>
-          
-          <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise2" seed="1" />
-          <feOffset in="noise2" dx="0" dy="0" result="offsetNoise2">
+
+          <feOffset in="noise1" dx="0" dy="0" result="offsetNoise2">
             <animate attributeName="dy" values="0; -700" dur="6s" repeatCount="indefinite" calcMode="linear" />
           </feOffset>
-          
-          <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise1" seed="2" />
-          <feOffset in="noise1" dx="0" dy="0" result="offsetNoise3">
+
+          <feOffset in="noise2" dx="0" dy="0" result="offsetNoise3">
             <animate attributeName="dx" values="490; 0" dur="6s" repeatCount="indefinite" calcMode="linear" />
           </feOffset>
-          
-          <feTurbulence type="turbulence" baseFrequency="0.02" numOctaves="10" result="noise2" seed="2" />
+
           <feOffset in="noise2" dx="0" dy="0" result="offsetNoise4">
             <animate attributeName="dx" values="0; -490" dur="6s" repeatCount="indefinite" calcMode="linear" />
           </feOffset>
@@ -69,8 +69,6 @@
             <div class="electric-glow-1"></div>
             <div class="electric-glow-2"></div>
           </div>
-          <div class="electric-overlay-1"></div>
-          <div class="electric-overlay-2"></div>
           <div class="electric-bg-glow"></div>
           
           <div class="electric-content">
@@ -94,8 +92,6 @@
             <div class="electric-glow-1"></div>
             <div class="electric-glow-2"></div>
           </div>
-          <div class="electric-overlay-1"></div>
-          <div class="electric-overlay-2"></div>
           <div class="electric-bg-glow"></div>
           
           <div class="electric-content">
@@ -119,8 +115,6 @@
             <div class="electric-glow-1"></div>
             <div class="electric-glow-2"></div>
           </div>
-          <div class="electric-overlay-1"></div>
-          <div class="electric-overlay-2"></div>
           <div class="electric-bg-glow"></div>
           
           <div class="electric-content">
@@ -165,12 +159,6 @@ const { isAuthenticated } = useAuth()
   position: relative;
   transform: scale(1);
   transition: transform 0.3s ease;
-  background: linear-gradient(
-    -30deg,
-    rgba(255, 255, 255, 0.1),
-    transparent,
-    rgba(255, 255, 255, 0.1)
-  );
 }
 
 .electric-card:hover {
@@ -272,46 +260,6 @@ const { isAuthenticated } = useAuth()
   .electric-glow-2 {
     filter: blur(2px);
     opacity: 0.5;
-  }
-}
-
-/* Overlay Effects */
-.electric-overlay-1,
-.electric-overlay-2 {
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  border-radius: 1.5rem;
-  mix-blend-mode: overlay;
-  transform: scale(1.1);
-  filter: blur(16px);
-  background: linear-gradient(
-    -30deg,
-    white,
-    transparent 30%,
-    transparent 70%,
-    white
-  );
-  pointer-events: none;
-}
-
-.electric-overlay-1 {
-  opacity: 1;
-}
-
-.electric-overlay-2 {
-  opacity: 0.5;
-}
-
-/* Disable heavy overlay effects on mobile */
-@media (max-width: 768px) {
-  .electric-overlay-1,
-  .electric-overlay-2 {
-    display: none;
   }
 }
 
@@ -434,12 +382,5 @@ const { isAuthenticated } = useAuth()
     transparent,
     rgb(22, 163, 74)
   );
-}
-
-/* Disable SVG filter animations on mobile and for reduced motion */
-@media (max-width: 768px), (prefers-reduced-motion: reduce) {
-  svg animate {
-    animation-play-state: paused !important;
-  }
 }
 </style>

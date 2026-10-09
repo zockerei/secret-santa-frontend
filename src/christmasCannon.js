@@ -10,10 +10,7 @@ const AUTO_FIRE_INTERVAL = 0.15 // seconds between shots while the pointer is he
 const LIGHT_POOL_SIZE = 6 // fairy lights are real lights, and adding lights to a scene is slow, so they are reused
 
 // The room spans -20..20 on x and z, the floor is at y = 0, the cannon stands in the front corner
-const CANNON_POSITION = new THREE.Vector3(26, 0, 26)
-const PIVOT_HEIGHT = 3.8
 const MUZZLE_DISTANCE = 6.5
-const PIVOT = CANNON_POSITION.clone().setY(PIVOT_HEIGHT)
 const CAMERA_TARGET = new THREE.Vector3(0, 0, 0)
 const CAMERA_OFFSET = new THREE.Vector3(55, 38, 55)
 
@@ -390,19 +387,13 @@ export function createChristmasCannon(container, { onShot = () => {} } = {}) {
 
   // --- The cannon ----------------------------------------------------------------------
 
+  // Floats in front of the camera, so it looks like you fire from the screen into the room.
+  // `pivot` is where the barrel turns, it is placed in resize() as it depends on the camera.
+  const pivot = new THREE.Vector3()
   const cannon = new THREE.Group()
-  cannon.position.copy(CANNON_POSITION)
   scene.add(cannon)
 
-  const wood = material(0x5b3a1e)
-  cannon.add(mesh(unitBox, material(0x1d5c34), { position: [0, 2.2, -0.5], scale: [3.6, 1.6, 6] }))
-  for (const x of [-2.4, 2.4]) {
-    cannon.add(mesh(unitCylinder, wood, { position: [x, 2.2, 0], scale: [2.2, 0.6, 2.2], rotation: [0, 0, Math.PI / 2] }))
-    cannon.add(mesh(unitCylinder, gold, { position: [x * 1.1, 2.2, 0], scale: [0.6, 0.6, 0.6], rotation: [0, 0, Math.PI / 2] }))
-  }
-
   const barrelPivot = new THREE.Group()
-  barrelPivot.position.y = PIVOT_HEIGHT
   cannon.add(barrelPivot)
   const barrel = new THREE.Group() // moves back on recoil
   barrelPivot.add(barrel)
@@ -422,6 +413,7 @@ export function createChristmasCannon(container, { onShot = () => {} } = {}) {
   const flashLight = new THREE.PointLight(0xffb347, 0, 60, 2)
   flashLight.position.z = MUZZLE_DISTANCE + 1
   barrel.add(flashLight)
+  cannon.traverse((part) => { part.castShadow = false })
 
   let recoil = 0
   let flashAmount = 0
@@ -498,7 +490,7 @@ export function createChristmasCannon(container, { onShot = () => {} } = {}) {
   function tree() {
     const group = new THREE.Group()
     group.add(mesh(unitCylinder, material(0xa0522d), { position: [0, 1.5, 0], scale: [2, 3, 2] }))
-    group.add(mesh(unitCylinder, wood, { position: [0, 3.5, 0], scale: [0.6, 2, 0.6] }))
+    group.add(mesh(unitCylinder, material(0x5b3a1e), { position: [0, 3.5, 0], scale: [0.6, 2, 0.6] }))
     const needles = material(0x2e7d32)
     for (const [y, radius, height] of [[6.5, 5, 6], [9.5, 4, 5], [12.3, 2.8, 4.5]]) {
       group.add(mesh(cone, needles, { position: [0, y, 0], scale: [radius, height, radius] }))
@@ -573,11 +565,11 @@ export function createChristmasCannon(container, { onShot = () => {} } = {}) {
     raycaster.setFromCamera(pointer, camera)
     const hit = raycaster.intersectObjects(aimTargets, true)[0]
     const point = hit ? hit.point : raycaster.ray.at(200, new THREE.Vector3())
-    // Not too far away and not under the floor
-    const fromCannon = point.sub(PIVOT)
-    const flat = Math.hypot(fromCannon.x, fromCannon.z)
-    if (flat > 120) fromCannon.multiplyScalar(120 / flat)
-    aimPoint.copy(fromCannon.add(PIVOT))
+    // Not too far from the room and not under the floor
+    const fromRoom = point.sub(CAMERA_TARGET)
+    const flat = Math.hypot(fromRoom.x, fromRoom.z)
+    if (flat > 100) fromRoom.multiplyScalar(100 / flat)
+    aimPoint.copy(fromRoom.add(CAMERA_TARGET))
     aimPoint.y = Math.max(aimPoint.y, 0)
   }
 
@@ -591,18 +583,14 @@ export function createChristmasCannon(container, { onShot = () => {} } = {}) {
   }
 
   function setAimTarget() {
-    const velocity = launchVelocity(PIVOT, aimPoint)
+    const velocity = launchVelocity(pivot, aimPoint)
     aim.targetYaw = Math.atan2(velocity.x, velocity.z)
-    aim.targetPitch = clamp(Math.atan2(velocity.y, Math.hypot(velocity.x, velocity.z)), -0.1, 1.4)
+    aim.targetPitch = clamp(Math.atan2(velocity.y, Math.hypot(velocity.x, velocity.z)), -1.3, 1.4)
   }
 
   let shots = []
   let shotCount = 0
 
-  // Start out pointing at the middle of the room
-  setAimTarget()
-  aim.yaw = aim.targetYaw
-  aim.pitch = aim.targetPitch
 
   function removeShot(item) {
     world.removeBody(item.body)
@@ -621,7 +609,7 @@ export function createChristmasCannon(container, { onShot = () => {} } = {}) {
       Math.sin(aim.pitch),
       Math.cos(aim.yaw) * Math.cos(aim.pitch)
     )
-    const muzzle = PIVOT.clone().addScaledVector(direction, MUZZLE_DISTANCE)
+    const muzzle = pivot.clone().addScaledVector(direction, MUZZLE_DISTANCE * cannon.scale.x)
     const velocity = launchVelocity(muzzle, aimPoint)
 
     shotCount++
@@ -691,10 +679,21 @@ export function createChristmasCannon(container, { onShot = () => {} } = {}) {
     camera.position.copy(CAMERA_TARGET).addScaledVector(CAMERA_OFFSET, clamp(1.3 / camera.aspect, 1, 2.3))
     camera.lookAt(CAMERA_TARGET)
     camera.updateProjectionMatrix()
+    // The cannon stays just below the middle of the bottom edge
+    const forward = camera.getWorldDirection(new THREE.Vector3())
+    const up = new THREE.Vector3(0, 1, 0).applyQuaternion(camera.quaternion)
+    pivot.copy(camera.position).addScaledVector(forward, 30).addScaledVector(up, -11)
+    cannon.position.copy(pivot)
+    cannon.scale.setScalar(clamp(camera.aspect / 1.3, 0.6, 1)) // smaller on narrow screens
+    setAimTarget()
   }
   const resizeObserver = new ResizeObserver(resize)
   resizeObserver.observe(container)
   resize()
+
+  // Start out pointing at the middle of the room
+  aim.yaw = aim.targetYaw
+  aim.pitch = aim.targetPitch
 
   // --- Loop ----------------------------------------------------------------------------
 

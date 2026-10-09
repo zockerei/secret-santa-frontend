@@ -211,12 +211,8 @@ function initVisualization() {
   camera.position.set(-0.09397456774197047, -2.5597086635726947, 24.420789670889008)
   camera.rotation.set(0.10443543723052419, -0.003827152981119352, 0.0004011488708739715)
 
-  const format = renderer.capabilities.isWebGL2
-    ? THREE.RedFormat
-    : THREE.LuminanceFormat
-
   uniforms.tAudioData = {
-    value: new THREE.DataTexture(analyser.data, fftSize / 2, 1, format),
+    value: new THREE.DataTexture(analyser.data, fftSize / 2, 1, THREE.RedFormat),
   }
 
   // Reduce scene complexity on mobile

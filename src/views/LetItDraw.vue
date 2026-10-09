@@ -57,6 +57,8 @@
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue'
 import { useRouter } from 'vue-router'
+// Registers window.particlesJS
+import 'particles.js'
 
 const router = useRouter()
 const containerRef = ref(null)

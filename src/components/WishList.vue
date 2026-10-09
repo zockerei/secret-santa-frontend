@@ -1,7 +1,7 @@
 <template>
   <div
     :class="[
-      'border-l-4 p-4 rounded',
+      'border-l-4 p-4 rounded-sm',
       mine
         ? 'bg-blue-50 dark:bg-blue-900/40 border-blue-400 dark:border-blue-500'
         : 'bg-yellow-50 dark:bg-yellow-900/40 border-yellow-400 dark:border-yellow-500'

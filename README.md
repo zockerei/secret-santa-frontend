@@ -1,6 +1,6 @@
 # Secret Santa Frontend 🎄
 
-The website for a family Secret Santa ("Wichteln"), in German. Built with Vue 3, Vite and Tailwind CSS, for the [Secret Santa backend](https://github.com/zockerei/secret-santa-backend).
+The website for a family Secret Santa ("Wichteln"), in German. Built with Vue 3, Vite and Tailwind CSS 4, for the [Secret Santa backend](https://github.com/zockerei/secret-santa-backend).
 
 ## What It Does
 
@@ -38,6 +38,7 @@ src/
 ├── api.js            # All backend calls
 ├── format.js         # Date formatting
 ├── markdown.js       # Wish list rendering (sanitized with DOMPurify)
+├── style.css         # Tailwind setup and the shared classes (card, btn, input, ...)
 ├── main.js           # Routes and login checks
 ├── App.vue           # Navbar, lights and toasts
 ├── composables/      # Login state (useAuth) and toasts (useToast)
@@ -50,4 +51,3 @@ Pages are only loaded when they are opened, so the home page doesn't download th
 ## Notes
 
 - The Christmas Cannon (`public/cannon.js`) loads three.js, cannon and gsap from cdn.skypack.dev and its 3D models from assets.codepen.io. If one of those goes away, that page stops working; the rest of the site doesn't depend on them.
-- `npm audit` reports issues in Tailwind CSS 3's build tools. They only matter when building, nothing of it ends up in the website. Fixing them means moving to Tailwind 4.

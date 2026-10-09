@@ -1,7 +1,7 @@
 <template>
   <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors overflow-x-hidden">
     <!-- Navigation Bar -->
-    <nav class="bg-white dark:bg-gray-800 shadow-sm sticky top-0 z-40 transition-colors">
+    <nav class="bg-white dark:bg-gray-800 shadow-xs sticky top-0 z-40 transition-colors">
       <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
           <!-- Logo -->
@@ -42,7 +42,7 @@
               <div class="flex items-center space-x-3 border-l dark:border-gray-600 pl-3">
                 <span class="text-sm text-gray-600 dark:text-gray-300 hidden sm:inline">
                   {{ user?.name }}
-                  <span v-if="isAdmin" class="ml-1 text-xs bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 px-2 py-0.5 rounded">
+                  <span v-if="isAdmin" class="ml-1 text-xs bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 px-2 py-0.5 rounded-sm">
                     Admin
                   </span>
                 </span>
@@ -86,7 +86,7 @@
           <template v-else>
             <div class="px-3 py-2 text-sm text-gray-600 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700 mb-2">
               {{ user?.name }}
-              <span v-if="isAdmin" class="ml-1 text-xs bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 px-2 py-0.5 rounded">
+              <span v-if="isAdmin" class="ml-1 text-xs bg-purple-100 dark:bg-purple-900 text-purple-800 dark:text-purple-200 px-2 py-0.5 rounded-sm">
                 Admin
               </span>
             </div>

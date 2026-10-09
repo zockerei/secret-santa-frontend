@@ -1,7 +1,7 @@
 <template>
   <button
     @click="toggleDarkMode"
-    class="relative inline-flex items-center justify-center w-14 h-8 rounded-full transition-colors focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+    class="relative inline-flex items-center justify-center w-14 h-8 rounded-full transition-colors focus:outline-hidden focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
     :class="darkMode ? 'bg-gray-700' : 'bg-yellow-400'"
     aria-label="Toggle dark mode"
   >

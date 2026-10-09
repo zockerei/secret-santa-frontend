@@ -1,41 +1,107 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
+
+/* Dark mode follows the .dark class that DarkModeToggle puts on <html> */
+@custom-variant dark (&:where(.dark, .dark *));
+
+/* Tailwind 4 gives buttons the default cursor, the site was built with the pointer */
+@layer base {
+  button:not(:disabled),
+  [role='button']:not(:disabled) {
+    cursor: pointer;
+  }
+}
 
 /* The building blocks the pages share */
-@layer components {
-  .page {
-    @apply min-h-screen bg-gradient-to-br from-red-50 via-gray-50 to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors;
+@utility page {
+  @apply min-h-screen bg-linear-to-br from-red-50 via-gray-50 to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 transition-colors;
+}
+
+@utility card {
+  @apply bg-white dark:bg-gray-800 rounded-lg shadow-sm border border-transparent dark:border-gray-700;
+}
+
+@utility btn {
+  @apply inline-flex items-center justify-center px-3 py-1.5 rounded-md text-sm font-medium transition disabled:opacity-50 disabled:cursor-not-allowed;
+}
+
+@utility btn-primary {
+  @apply bg-red-600 text-white hover:bg-red-700;
+}
+
+@utility btn-success {
+  @apply bg-green-600 text-white hover:bg-green-700;
+}
+
+@utility btn-secondary {
+  @apply border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700;
+}
+
+@utility btn-danger {
+  @apply bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/50;
+}
+
+@utility input {
+  @apply w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-hidden focus:ring-2 focus:ring-red-500;
+}
+
+@utility label {
+  @apply block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1;
+}
+
+@utility badge {
+  @apply px-2 py-1 text-xs font-semibold rounded-sm whitespace-nowrap;
+}
+
+@utility empty {
+  @apply card text-center py-12 text-gray-500 dark:text-gray-400;
+}
+
+/* Rendered wish lists (MarkdownRenderer and the editor preview) */
+.markdown-content {
+  & h1 {
+    @apply text-2xl font-bold mt-4 mb-2 text-gray-900 dark:text-white;
   }
-  .card {
-    @apply bg-white dark:bg-gray-800 rounded-lg shadow border border-transparent dark:border-gray-700;
+  & h2 {
+    @apply text-xl font-bold mt-3 mb-2 text-gray-900 dark:text-white;
   }
-  .btn {
-    @apply inline-flex items-center justify-center px-3 py-1.5 rounded-md text-sm font-medium transition disabled:opacity-50 disabled:cursor-not-allowed;
+  & h3 {
+    @apply text-lg font-bold mt-2 mb-1 text-gray-900 dark:text-white;
   }
-  .btn-primary {
-    @apply bg-red-600 text-white hover:bg-red-700;
+  & p {
+    @apply mb-2 text-gray-700 dark:text-gray-200;
   }
-  .btn-success {
-    @apply bg-green-600 text-white hover:bg-green-700;
+  & ul {
+    @apply list-disc list-inside mb-2 text-gray-700 dark:text-gray-200;
   }
-  .btn-secondary {
-    @apply border border-gray-300 dark:border-gray-600 text-gray-700 dark:text-gray-200 hover:bg-gray-50 dark:hover:bg-gray-700;
+  & ol {
+    @apply list-decimal list-inside mb-2 text-gray-700 dark:text-gray-200;
   }
-  .btn-danger {
-    @apply bg-red-50 dark:bg-red-900/30 text-red-600 dark:text-red-400 hover:bg-red-100 dark:hover:bg-red-900/50;
+  & li {
+    @apply mb-1;
   }
-  .input {
-    @apply w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-md bg-white dark:bg-gray-700 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-red-500;
+  & strong {
+    @apply font-bold text-gray-900 dark:text-white;
   }
-  .label {
-    @apply block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1;
+  & em {
+    @apply italic;
   }
-  .badge {
-    @apply px-2 py-1 text-xs font-semibold rounded whitespace-nowrap;
+  & code {
+    @apply bg-gray-200 dark:bg-gray-700 px-1 py-0.5 rounded-sm text-sm font-mono;
   }
-  .empty {
-    @apply card text-center py-12 text-gray-500 dark:text-gray-400;
+  & pre {
+    @apply bg-gray-200 dark:bg-gray-700 p-3 rounded-sm mb-2 overflow-x-auto;
+  }
+  & pre code {
+    @apply bg-transparent p-0;
+  }
+  & a {
+    @apply text-blue-600 dark:text-blue-400 hover:underline;
+  }
+  & blockquote {
+    @apply border-l-4 border-gray-300 dark:border-gray-600 pl-4 italic text-gray-600 dark:text-gray-400 my-2;
+  }
+  & hr {
+    @apply border-gray-300 dark:border-gray-600 my-4;
   }
 }
 

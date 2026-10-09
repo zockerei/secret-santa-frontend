@@ -36,7 +36,7 @@
             </header>
 
             <template v-if="event.recipient">
-              <div class="bg-gradient-to-r from-red-50 to-green-50 dark:from-red-900/40 dark:to-green-900/40 p-5 rounded-lg border border-red-100 dark:border-red-800">
+              <div class="bg-linear-to-r from-red-50 to-green-50 dark:from-red-900/40 dark:to-green-900/40 p-5 rounded-lg border border-red-100 dark:border-red-800">
                 <p class="text-sm text-gray-600 dark:text-gray-300 mb-1 font-medium">🎅 Du bist Wichtel für</p>
                 <p class="text-2xl font-bold text-red-600 dark:text-red-400">{{ event.recipient.name }}</p>
               </div>

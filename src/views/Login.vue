@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen flex items-center justify-center px-4 py-8 sm:py-12 bg-gradient-to-br from-red-50 to-green-50 dark:from-gray-900 dark:to-gray-800 overflow-x-hidden" style="min-height: 100vh; min-height: 100dvh;">
+  <div class="min-h-screen flex items-center justify-center px-4 py-8 sm:py-12 bg-linear-to-br from-red-50 to-green-50 dark:from-gray-900 dark:to-gray-800 overflow-x-hidden" style="min-height: 100vh; min-height: 100dvh;">
     <div class="max-w-md w-full">
       <div class="text-center mb-8">
         <h1 class="text-4xl font-bold text-gray-900 dark:text-white mb-2">🎄 Weihnachten</h1>
@@ -19,7 +19,7 @@
               v-model="email"
               type="email"
               required
-              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-hidden focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               placeholder="deine@email.com"
             />
           </div>
@@ -33,7 +33,7 @@
               v-model="password"
               type="password"
               required
-              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+              class="w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:outline-hidden focus:ring-2 focus:ring-red-500 focus:border-transparent bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
               placeholder="••••••••"
             />
           </div>

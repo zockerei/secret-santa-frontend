@@ -1,5 +1,5 @@
 <template>
-  <div class="min-h-screen bg-gradient-to-b from-red-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-x-hidden" style="min-height: 100vh; min-height: 100dvh;">
+  <div class="min-h-screen bg-linear-to-b from-red-50 via-white to-green-50 dark:from-gray-900 dark:via-gray-800 dark:to-gray-900 overflow-x-hidden" style="min-height: 100vh; min-height: 100dvh;">
     <!-- SVG Filters for Electric Border - Disabled on mobile for performance -->
     <svg class="absolute w-0 h-0" :class="{ 'mobile-hidden': true }">
       <defs>
@@ -39,7 +39,7 @@
         <div class="mb-6">
           <span class="text-6xl sm:text-8xl">🎄</span>
         </div>
-        <h1 class="text-5xl sm:text-7xl font-bold mb-6 bg-gradient-to-r from-red-600 via-yellow-600 to-green-600 bg-clip-text text-transparent dark:from-red-400 dark:via-yellow-400 dark:to-green-400">
+        <h1 class="text-5xl sm:text-7xl font-bold mb-6 bg-linear-to-r from-red-600 via-yellow-600 to-green-600 bg-clip-text text-transparent dark:from-red-400 dark:via-yellow-400 dark:to-green-400">
           Frohe Weihnachten
         </h1>
         <p class="text-xl sm:text-2xl text-gray-700 dark:text-gray-300 mb-8 max-w-3xl mx-auto font-light">
@@ -48,7 +48,7 @@
         <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <router-link
             :to="isAuthenticated ? '/dashboard' : '/login'"
-            class="w-full sm:w-auto bg-gradient-to-r from-red-600 to-red-700 dark:from-red-700 dark:to-red-800 text-white px-10 py-4 rounded-xl font-semibold hover:from-red-700 hover:to-red-800 transition shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
+            class="w-full sm:w-auto bg-linear-to-r from-red-600 to-red-700 dark:from-red-700 dark:to-red-800 text-white px-10 py-4 rounded-xl font-semibold hover:from-red-700 hover:to-red-800 transition shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
           >
             {{ isAuthenticated ? 'Zum Dashboard' : 'Anmelden' }}
           </router-link>
@@ -135,7 +135,7 @@
 
       <!-- Christmas Quote -->
       <div class="mt-20 text-center">
-        <div class="inline-block bg-gradient-to-r from-red-100 to-green-100 dark:from-red-900/30 dark:to-green-900/30 p-8 rounded-3xl shadow-xl">
+        <div class="inline-block bg-linear-to-r from-red-100 to-green-100 dark:from-red-900/30 dark:to-green-900/30 p-8 rounded-3xl shadow-xl">
           <p class="text-2xl italic text-gray-700 dark:text-gray-200 mb-4">
             "Weihnachten ist die Zeit, in der Kinder ganz brav sind – zumindest solange der Weihnachtsmann zuschaut"
           </p>

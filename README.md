@@ -8,7 +8,7 @@ The website for a family Secret Santa ("Wichteln"), in German. Built with Vue 3,
 - **📦 Archiv**: past events, who you gave to and both wish lists
 - **👤 Profil**: change your name, email and password
 - **🛠️ Verwaltung** (admins only): create users and events, add participants, start or undo the draw
-- **✨ Extras**: Christmas Cannon, Let it draw and a music visualizer, linked from the home page
+- **✨ Extras**: Christmas Cannon, a nonogram puzzle game and a music visualizer, linked from the home page
 
 There is no registration, the admin creates every account.
 
@@ -38,6 +38,7 @@ src/
 ├── api.js            # All backend calls
 ├── format.js         # Date formatting
 ├── markdown.js       # Wish list rendering (sanitized with DOMPurify)
+├── nonogram.js       # Nonogram pictures, random puzzles and the solver that checks them
 ├── style.css         # Tailwind setup and the shared classes (card, btn, input, ...)
 ├── main.js           # Routes and login checks
 ├── App.vue           # Navbar, lights and toasts
@@ -51,3 +52,4 @@ Pages are only loaded when they are opened, so the home page doesn't download th
 ## Notes
 
 - The Christmas Cannon (`src/christmasCannon.js`) builds its room and everything it fires from code with three.js and cannon-es, so it needs no model files or CDNs.
+- Every nonogram (the Christmas pictures and the random ones) is checked by a line solver, so it has exactly one solution and can be solved without guessing. New pictures go in `CHRISTMAS_PUZZLES` in `src/nonogram.js`.

@@ -80,9 +80,9 @@
           </div>
         </router-link>
         
-        <!-- Let it draw Card with Gold Electric Border -->
+        <!-- Nonogram Card with Gold Electric Border -->
         <router-link 
-          to="/let-it-draw"
+          to="/nonogramm"
           class="electric-card electric-gold block cursor-pointer"
         >
           <div class="electric-inner">
@@ -95,10 +95,10 @@
           <div class="electric-bg-glow"></div>
           
           <div class="electric-content">
-            <div class="text-5xl mb-4">⭐</div>
-            <h3 class="text-xl font-bold mb-3 text-gray-900 dark:text-white">Let it draw</h3>
+            <div class="text-5xl mb-4">🧩</div>
+            <h3 class="text-xl font-bold mb-3 text-gray-900 dark:text-white">Nonogramm</h3>
             <p class="text-gray-600 dark:text-gray-300">
-              Weihnachtszeichnung
+              Weihnachtliche Bilderrätsel
             </p>
           </div>
         </router-link>

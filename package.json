@@ -12,7 +12,6 @@
     "cannon-es": "^0.20.0",
     "dompurify": "^3.4.16",
     "marked": "^18.1.0",
-    "particles.js": "^2.0.0",
     "three": "^0.186.1",
     "vue": "^3.5.43",
     "vue-router": "^4.6.4"

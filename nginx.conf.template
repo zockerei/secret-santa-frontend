@@ -30,7 +30,7 @@ server {
         try_files $uri =404;
     }
 
-    # Everything else (index.html, music, cannon.js, icons) is checked for changes on every visit
+    # Everything else (index.html, music, icons) is checked for changes on every visit
     location / {
         expires -1;
         try_files $uri $uri/ /index.html;

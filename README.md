@@ -50,4 +50,4 @@ Pages are only loaded when they are opened, so the home page doesn't download th
 
 ## Notes
 
-- The Christmas Cannon (`public/cannon.js`) loads three.js, cannon and gsap from cdn.skypack.dev and its 3D models from assets.codepen.io. If one of those goes away, that page stops working; the rest of the site doesn't depend on them.
+- The Christmas Cannon (`src/christmasCannon.js`) builds its room and everything it fires from code with three.js and cannon-es, so it needs no model files or CDNs.

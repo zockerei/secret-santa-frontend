@@ -10,11 +10,11 @@ const AUTO_FIRE_INTERVAL = 0.15 // seconds between shots while the pointer is he
 const LIGHT_POOL_SIZE = 6 // fairy lights are real lights, and adding lights to a scene is slow, so they are reused
 
 // The room spans -20..20 on x and z, the floor is at y = 0, the cannon stands in the front corner
-const CANNON_POSITION = new THREE.Vector3(36, 0, 16)
+const CANNON_POSITION = new THREE.Vector3(26, 0, 26)
 const PIVOT_HEIGHT = 3.8
 const MUZZLE_DISTANCE = 6.5
 const PIVOT = CANNON_POSITION.clone().setY(PIVOT_HEIGHT)
-const CAMERA_TARGET = new THREE.Vector3(0, 2, 0)
+const CAMERA_TARGET = new THREE.Vector3(0, 0, 0)
 const CAMERA_OFFSET = new THREE.Vector3(55, 38, 55)
 
 const FESTIVE_COLORS = [0xc0392b, 0x1e8449, 0xf1c40f, 0x2e86c1, 0x8e44ad, 0xe67e22, 0xecf0f1]

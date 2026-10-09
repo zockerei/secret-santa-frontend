@@ -114,13 +114,13 @@
           </template>
         </div>
       </div>
+
+      <!-- Christmas Lights hanging from navbar -->
+      <ul class="lightrope" aria-hidden="true">
+        <li v-for="n in 50" :key="n"></li>
+      </ul>
     </nav>
-    
-    <!-- Christmas Lights hanging from navbar -->
-    <ul class="lightrope">
-      <li v-for="n in 42" :key="n"></li>
-    </ul>
-    
+
     <!-- Main Content -->
     <main>
       <router-view />
@@ -191,164 +191,73 @@ const closeMobileMenu = () => {
   background: #555;
 }
 
-/* Christmas Lights Rope */
+/* Christmas Lights Rope
+   li = socket, ::before = bulb (only the bulb's opacity is animated), ::after = wire to the next bulb */
 .lightrope {
-  text-align: center;
-  white-space: nowrap;
-  overflow: visible;
-  position: sticky;
-  z-index: 35;
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  height: 80px; /* room for bulbs + glow; clips everything else */
   margin: 0;
   padding: 0;
-  pointer-events: none;
-  width: 100%;
-  top: 4rem; /* 64px - height of navbar */
-  left: 0;
   list-style: none;
-  height: 0;
-  line-height: 0;
-  max-width: 100vw;
+  display: flex;
+  justify-content: center; /* overflows evenly on both sides */
+  overflow: hidden;
+  pointer-events: none;
 }
 
 .lightrope li {
+  --c: #dc2626; /* Red */
   position: relative;
-  animation-fill-mode: both;
-  animation-iteration-count: infinite;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: inline-block;
+  flex: none;
+  width: 10px;
+  height: 8px;
+  margin: 0 21px; /* 52px per bulb */
+  border-radius: 3px;
+  background: #222;
+}
+
+.lightrope li:nth-child(3n+2) { --c: #16a34a; } /* Green */
+.lightrope li:nth-child(3n)   { --c: #eab308; } /* Gold */
+
+.lightrope li::before {
+  content: "";
+  position: absolute;
+  top: 6px;
+  left: -1px;
   width: 12px;
   height: 28px;
   border-radius: 50%;
-  margin: 0 20px;
-  background: rgba(220, 38, 38, 1); /* Red */
-  box-shadow: 0px 4.67px 24px 3px rgba(220, 38, 38, 1);
-  animation-name: flash-1;
-  animation-duration: 2s;
-  vertical-align: top;
+  background: var(--c);
+  box-shadow: 0 5px 24px 3px var(--c);
+  animation: twinkle 1.6s ease-in-out infinite alternate;
 }
 
-/* Reduce number of lights on mobile for better performance */
-@media (max-width: 768px) {
-  .lightrope li:nth-child(n+22) {
-    display: none;
-  }
-}
+.lightrope li:nth-child(2n)::before { animation-duration: 1.1s; }
+.lightrope li:nth-child(3n)::before { animation-duration: 2s; }
+.lightrope li:nth-child(4n+1)::before { animation-delay: -0.8s; }
 
-/* Disable animations for reduced motion */
-@media (prefers-reduced-motion: reduce) {
-  .lightrope li {
-    animation: none;
-    opacity: 0.8;
-  }
-}
-
-.lightrope li:nth-child(2n+1) {
-  background: rgba(22, 163, 74, 1); /* Green */
-  box-shadow: 0px 4.67px 24px 3px rgba(22, 163, 74, 1);
-  animation-name: flash-2;
-  animation-duration: 0.4s;
-}
-
-.lightrope li:nth-child(4n+2) {
-  background: rgba(234, 179, 8, 1); /* Gold */
-  box-shadow: 0px 4.67px 24px 3px rgba(234, 179, 8, 1);
-  animation-name: flash-3;
-  animation-duration: 1.1s;
-}
-
-.lightrope li:nth-child(odd) {
-  animation-duration: 1.8s;
-}
-
-.lightrope li:nth-child(3n+1) {
-  animation-duration: 1.4s;
-}
-
-.lightrope li:before {
+.lightrope li::after {
   content: "";
   position: absolute;
-  background: #222;
-  width: 10px;
-  height: 9.33px;
-  border-radius: 3px;
-  top: -4.67px;
-  left: 1px;
-}
-
-.lightrope li:after {
-  content: "";
-  top: -14px;
-  left: 9px;
-  position: absolute;
+  top: -8px;
+  left: 5px;
   width: 52px;
-  height: 18.67px;
-  border-bottom: solid #222 2px;
+  height: 18px;
+  border-bottom: 2px solid #222;
   border-radius: 50%;
 }
 
-.lightrope li:last-child:after {
-  content: none;
+@keyframes twinkle {
+  to { opacity: 0.35; }
 }
 
-.lightrope li:first-child {
-  margin-left: -40px;
-}
-
-/* Prevent lights from causing extra scroll space on mobile */
-@media (max-width: 768px) {
-  .lightrope {
-    overflow-x: clip;
-    overflow-y: visible;
-  }
-  
-  .lightrope li {
-    margin: 0 15px;
-  }
-  
-  .lightrope li:first-child {
-    margin-left: -20px;
-  }
-}
-
-@keyframes flash-1 {
-  0%, 100% {
-    background: rgba(220, 38, 38, 1); /* Red */
-    box-shadow: 0px 4.67px 24px 3px rgba(220, 38, 38, 1);
-  }
-  50% {
-    background: rgba(220, 38, 38, 0.4);
-    box-shadow: 0px 4.67px 24px 3px rgba(220, 38, 38, 0.2);
-  }
-}
-
-@keyframes flash-2 {
-  0%, 100% {
-    background: rgba(22, 163, 74, 1); /* Green */
-    box-shadow: 0px 4.67px 24px 3px rgba(22, 163, 74, 1);
-  }
-  50% {
-    background: rgba(22, 163, 74, 0.4);
-    box-shadow: 0px 4.67px 24px 3px rgba(22, 163, 74, 0.2);
-  }
-}
-
-@keyframes flash-3 {
-  0%, 100% {
-    background: rgba(234, 179, 8, 1); /* Gold */
-    box-shadow: 0px 4.67px 24px 3px rgba(234, 179, 8, 1);
-  }
-  50% {
-    background: rgba(234, 179, 8, 0.4);
-    box-shadow: 0px 4.67px 24px 3px rgba(234, 179, 8, 0.2);
-  }
-}
-
-/* Reduce box-shadow intensity on mobile for better performance */
-@media (max-width: 768px) {
-  .lightrope li {
-    box-shadow: 0px 2px 12px 2px currentColor;
+@media (prefers-reduced-motion: reduce) {
+  .lightrope li::before {
+    animation: none;
+    opacity: 0.8;
   }
 }
 </style>

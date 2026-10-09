@@ -2,7 +2,7 @@
   <div class="min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors overflow-x-hidden">
     <!-- Navigation Bar -->
     <nav class="bg-white dark:bg-gray-800 shadow-xs sticky top-0 z-40 transition-colors">
-      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="px-4 sm:px-6 lg:px-8">
         <div class="flex justify-between h-16">
           <!-- Logo -->
           <div class="flex items-center">

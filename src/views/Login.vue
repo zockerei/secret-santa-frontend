@@ -51,12 +51,6 @@
           </button>
         </form>
         
-        <p class="mt-6 text-center text-sm text-gray-600 dark:text-gray-400">
-          Noch kein Konto? 
-          <router-link to="/register" class="text-red-600 dark:text-red-400 hover:text-red-700 dark:hover:text-red-300 font-semibold">
-            Registrieren
-          </router-link>
-        </p>
       </div>
     </div>
   </div>
@@ -76,38 +70,13 @@ const error = ref('')
 const loading = ref(false)
 
 const handleLogin = async () => {
+  loading.value = true
+  error.value = ''
   try {
-    loading.value = true
-    error.value = ''
-    
-    console.log('🔐 Attempting login with:', email.value)
-    
-    await login({
-      email: email.value,
-      password: password.value
-    })
-    
-    console.log('✅ Login successful, redirecting to dashboard')
-    
-    // Redirect to dashboard
+    await login(email.value, password.value)
     router.push('/dashboard')
   } catch (err) {
-    // Log the full error for debugging
-    console.error('❌ Login failed:', err)
-    
-    // Try to get the most specific error message
-    if (err.response) {
-      // Backend responded with an error
-      const detail = err.response.data?.detail || err.response.data?.message
-      error.value = detail || `Login failed: ${err.response.status} ${err.response.statusText}`
-    } else if (err.request) {
-      // No response from backend
-      error.value = 'Cannot connect to server'
-    } else {
-      error.value = err.message || 'Login failed. Please try again.'
-    }
-    
-    console.error('💬 Error shown to user:', error.value)
+    error.value = err.message
   } finally {
     loading.value = false
   }

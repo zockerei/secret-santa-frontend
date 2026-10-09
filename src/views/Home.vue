@@ -47,16 +47,10 @@
         </p>
         <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
           <router-link
-            to="/login"
+            :to="isAuthenticated ? '/dashboard' : '/login'"
             class="w-full sm:w-auto bg-gradient-to-r from-red-600 to-red-700 dark:from-red-700 dark:to-red-800 text-white px-10 py-4 rounded-xl font-semibold hover:from-red-700 hover:to-red-800 transition shadow-lg hover:shadow-xl transform hover:-translate-y-0.5"
           >
-            Anmelden
-          </router-link>
-          <router-link
-            to="/register"
-            class="w-full sm:w-auto bg-white dark:bg-gray-800 text-red-700 dark:text-red-400 px-10 py-4 rounded-xl font-semibold hover:bg-gray-50 dark:hover:bg-gray-700 transition border-2 border-red-600 dark:border-red-700 shadow-lg"
-          >
-            Registrieren
+            {{ isAuthenticated ? 'Zum Dashboard' : 'Anmelden' }}
           </router-link>
         </div>
       </div>
@@ -159,7 +153,9 @@
 </template>
 
 <script setup>
-// Simple Christmas-themed homepage
+import { useAuth } from '../composables/useAuth'
+
+const { isAuthenticated } = useAuth()
 </script>
 <style scoped>
 /* Electric Card Base Styles */

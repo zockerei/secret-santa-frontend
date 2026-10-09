@@ -22,12 +22,6 @@
               >
                 Anmelden
               </router-link>
-              <router-link
-                to="/register"
-                class="bg-red-600 text-white hover:bg-red-700 px-4 py-2 rounded-md text-sm font-medium transition"
-              >
-                Registrieren
-              </router-link>
             </template>
             
             <template v-else>
@@ -37,7 +31,14 @@
               >
                 Dashboard
               </router-link>
-              
+              <router-link
+                v-if="isAdmin"
+                to="/admin"
+                class="text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white px-3 py-2 rounded-md text-sm font-medium transition"
+              >
+                Verwaltung
+              </router-link>
+
               <div class="flex items-center space-x-3 border-l dark:border-gray-600 pl-3">
                 <span class="text-sm text-gray-600 dark:text-gray-300 hidden sm:inline">
                   {{ user?.name }}
@@ -80,13 +81,6 @@
             >
               Anmelden
             </router-link>
-            <router-link
-              @click="closeMobileMenu"
-              to="/register"
-              class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700 transition"
-            >
-              Registrieren
-            </router-link>
           </template>
           
           <template v-else>
@@ -102,6 +96,14 @@
               class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700 transition"
             >
               Dashboard
+            </router-link>
+            <router-link
+              v-if="isAdmin"
+              @click="closeMobileMenu"
+              to="/admin"
+              class="block px-3 py-2 rounded-md text-base font-medium text-gray-700 dark:text-gray-200 hover:text-gray-900 dark:hover:text-white hover:bg-gray-50 dark:hover:bg-gray-700 transition"
+            >
+              Verwaltung
             </router-link>
             <button
               @click="handleLogout"
@@ -145,34 +147,28 @@
 </template>
 
 <script setup>
-import { ref, computed, onMounted } from 'vue'
-import { useRoute } from 'vue-router'
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
 import { useAuth } from './composables/useAuth'
 import { useToast } from './composables/useToast'
 import DarkModeToggle from './components/DarkModeToggle.vue'
 
-const route = useRoute()
-const { user, isAuthenticated, isAdmin, logout, initAuth, loadUser } = useAuth()
+const router = useRouter()
+const { user, isAuthenticated, isAdmin, logout } = useAuth()
 const { toasts, showToast } = useToast()
 
 const mobileMenuOpen = ref(false)
 
 const handleLogout = () => {
   logout()
-  showToast('Successfully logged out!', 'success')
   mobileMenuOpen.value = false
+  router.push('/')
+  showToast('Du bist abgemeldet')
 }
 
 const closeMobileMenu = () => {
   mobileMenuOpen.value = false
 }
-
-onMounted(() => {
-  initAuth()
-  if (isAuthenticated.value) {
-    loadUser()
-  }
-})
 </script>
 
 <style>

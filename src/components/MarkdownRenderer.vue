@@ -7,8 +7,7 @@
 
 <script setup>
 import { computed } from 'vue'
-import { marked } from 'marked'
-import DOMPurify from 'dompurify'
+import { renderMarkdown } from '../markdown'
 
 const props = defineProps({
   content: {
@@ -17,18 +16,7 @@ const props = defineProps({
   }
 })
 
-// Configure marked options
-marked.setOptions({
-  breaks: true, // Convert line breaks to <br>
-  gfm: true // GitHub Flavored Markdown
-})
-
-const renderedMarkdown = computed(() => {
-  if (!props.content) return ''
-  // Render markdown and sanitize HTML to prevent XSS
-  const html = marked.parse(props.content)
-  return DOMPurify.sanitize(html)
-})
+const renderedMarkdown = computed(() => renderMarkdown(props.content))
 </script>
 
 <style scoped>

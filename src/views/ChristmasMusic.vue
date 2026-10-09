@@ -140,7 +140,7 @@ function loadAudio(index) {
     function (error) {
       console.error('Error loading audio:', error)
       isLoading.value = false
-      alert('Failed to load audio file. Please try another one.')
+      alert('Das Lied konnte nicht geladen werden. Probier ein anderes.')
     }
   )
 }
@@ -170,7 +170,7 @@ function uploadAudio(event) {
       function (error) {
         console.error('Error decoding audio:', error)
         isLoading.value = false
-        alert('Failed to decode audio file. Please try a different file.')
+        alert('Die Datei konnte nicht abgespielt werden. Probier eine andere.')
       }
     )
   }
@@ -178,7 +178,7 @@ function uploadAudio(event) {
   reader.onerror = function () {
     console.error('Error reading file')
     isLoading.value = false
-    alert('Failed to read file.')
+    alert('Die Datei konnte nicht gelesen werden.')
   }
 
   reader.readAsArrayBuffer(files[0])

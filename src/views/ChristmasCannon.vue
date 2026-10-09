@@ -1,7 +1,7 @@
 <template>
   <div class="christmas-cannon-container" :class="{ 'game-active': isGameActive }">
     <div id="canvas-container"></div>
-    <div id="loading" :style="{ display: isLoading ? 'flex' : 'none' }">Loading</div>
+    <div id="loading" :style="{ display: isLoading ? 'flex' : 'none' }">Lädt...</div>
     
     <!-- Hidden UI elements required by cannon.js -->
     <div id="ui" style="display: none;">

@@ -12,7 +12,7 @@
             : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
         ]"
       >
-        ✏️ Edit
+        ✏️ Schreiben
       </button>
       <button
         type="button"
@@ -24,7 +24,7 @@
             : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'
         ]"
       >
-        👁️ Preview
+        👁️ Vorschau
       </button>
     </div>
 
@@ -39,14 +39,14 @@
         class="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500 font-mono text-sm"
       ></textarea>
       <div class="mt-2 text-xs text-gray-500 dark:text-gray-400">
-        <p class="font-medium mb-1">💡 Markdown Formatting:</p>
+        <p class="font-medium mb-1">💡 Formatierung:</p>
         <div class="grid grid-cols-2 gap-1">
-          <span><code class="bg-gray-100 dark:bg-gray-800 px-1 rounded">**bold**</code> → <strong>bold</strong></span>
-          <span><code class="bg-gray-100 dark:bg-gray-800 px-1 rounded">*italic*</code> → <em>italic</em></span>
-          <span><code class="bg-gray-100 dark:bg-gray-800 px-1 rounded"># Heading</code> → Large text</span>
-          <span><code class="bg-gray-100 dark:bg-gray-800 px-1 rounded">- List item</code> → Bullet list</span>
-          <span><code class="bg-gray-100 dark:bg-gray-800 px-1 rounded">[link](url)</code> → Clickable link</span>
-          <span><code class="bg-gray-100 dark:bg-gray-800 px-1 rounded">`code`</code> → Inline code</span>
+          <span><code class="bg-gray-100 dark:bg-gray-800 px-1 rounded">**fett**</code> → <strong>fett</strong></span>
+          <span><code class="bg-gray-100 dark:bg-gray-800 px-1 rounded">*kursiv*</code> → <em>kursiv</em></span>
+          <span><code class="bg-gray-100 dark:bg-gray-800 px-1 rounded"># Überschrift</code> → Große Schrift</span>
+          <span><code class="bg-gray-100 dark:bg-gray-800 px-1 rounded">- Punkt</code> → Aufzählung</span>
+          <span><code class="bg-gray-100 dark:bg-gray-800 px-1 rounded">[Link](url)</code> → Klickbarer Link</span>
+          <span><code class="bg-gray-100 dark:bg-gray-800 px-1 rounded">`Code`</code> → Code</span>
         </div>
       </div>
     </div>
@@ -62,7 +62,7 @@
         v-else
         class="min-h-[200px] px-3 py-2 border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-800 rounded-md flex items-center justify-center text-gray-400 dark:text-gray-500 italic"
       >
-        No content to preview
+        Noch nichts geschrieben
       </div>
     </div>
   </div>
@@ -70,8 +70,7 @@
 
 <script setup>
 import { ref, computed } from 'vue'
-import { marked } from 'marked'
-import DOMPurify from 'dompurify'
+import { renderMarkdown } from '../markdown'
 
 const props = defineProps({
   modelValue: {
@@ -96,18 +95,7 @@ defineEmits(['update:modelValue'])
 
 const activeTab = ref('edit')
 
-// Configure marked options
-marked.setOptions({
-  breaks: true, // Convert line breaks to <br>
-  gfm: true // GitHub Flavored Markdown
-})
-
-const renderedMarkdown = computed(() => {
-  if (!props.modelValue) return ''
-  // Render markdown and sanitize HTML to prevent XSS
-  const html = marked.parse(props.modelValue)
-  return DOMPurify.sanitize(html)
-})
+const renderedMarkdown = computed(() => renderMarkdown(props.modelValue))
 </script>
 
 <style scoped lang="postcss">

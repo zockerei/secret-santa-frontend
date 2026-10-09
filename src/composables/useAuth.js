@@ -1,83 +1,45 @@
-import { ref, computed } from 'vue'
-import { authAPI, userAPI } from '../utils/api'
-import { useRouter } from 'vue-router'
+import { computed, ref } from 'vue'
+import { auth, me } from '../api'
 
-const user = ref(null)
-const token = ref(localStorage.getItem('token'))
-
-export function useAuth() {
-  const router = useRouter()
-  
-  const isAuthenticated = computed(() => !!token.value)
-  const isAdmin = computed(() => user.value?.is_admin || false)
-
-  const login = async (credentials) => {
-    const data = await authAPI.login(credentials)
-    token.value = data.access_token
-    user.value = data.user
-    localStorage.setItem('token', data.access_token)
-    localStorage.setItem('user', JSON.stringify(data.user))
-    return data
-  }
-
-  const register = async (userData) => {
-    const data = await authAPI.register(userData)
-    return data
-  }
-
-  const logout = () => {
-    token.value = null
-    user.value = null
-    localStorage.removeItem('token')
-    localStorage.removeItem('user')
-    router.push('/login')
-  }
-
-  const loadUser = async () => {
-    if (token.value && !user.value) {
-      try {
-        const storedUser = localStorage.getItem('user')
-        if (storedUser) {
-          user.value = JSON.parse(storedUser)
-        } else {
-          user.value = await userAPI.getCurrentUser()
-          localStorage.setItem('user', JSON.stringify(user.value))
-        }
-      } catch (error) {
-        console.error('Failed to load user:', error)
-        logout()
-      }
-    }
-  }
-
-  const initAuth = () => {
-    const storedToken = localStorage.getItem('token')
-    const storedUser = localStorage.getItem('user')
-    
-    if (storedToken) {
-      token.value = storedToken
-    }
-    
-    if (storedUser) {
-      try {
-        user.value = JSON.parse(storedUser)
-      } catch (error) {
-        console.error('Failed to parse stored user:', error)
-        logout()
-      }
-    }
-  }
-
-  return {
-    user,
-    token,
-    isAuthenticated,
-    isAdmin,
-    login,
-    register,
-    logout,
-    loadUser,
-    initAuth
+function storedUser() {
+  try {
+    return JSON.parse(localStorage.getItem('user'))
+  } catch {
+    return null
   }
 }
 
+// Shared by every component, and kept in localStorage so a reload stays logged in
+const token = ref(localStorage.getItem('token'))
+const user = ref(storedUser())
+
+const isAuthenticated = computed(() => !!token.value)
+const isAdmin = computed(() => !!user.value?.is_admin)
+
+function setUser(value) {
+  user.value = value
+  localStorage.setItem('user', JSON.stringify(value))
+}
+
+async function login(email, password) {
+  const data = await auth.login(email, password)
+  token.value = data.access_token
+  localStorage.setItem('token', data.access_token)
+  setUser(data.user)
+}
+
+function logout() {
+  token.value = null
+  user.value = null
+  localStorage.removeItem('token')
+  localStorage.removeItem('user')
+}
+
+// Picks up changes made elsewhere, e.g. the admin giving someone admin rights
+async function refreshUser() {
+  if (token.value) setUser(await me.get())
+}
+
+export function useAuth() {
+  return { user, isAuthenticated, isAdmin, login, logout, setUser, refreshUser }
+}

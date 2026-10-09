@@ -1,74 +1,53 @@
-# Secret Santa Frontend
+# Secret Santa Frontend 🎄
 
-A modern web application for organizing Secret Santa gift exchanges.
+The website for a family Secret Santa ("Wichteln"), in German. Built with Vue 3, Vite and Tailwind CSS, for the [Secret Santa backend](https://github.com/zockerei/secret-santa-backend).
 
-## Features
+## What It Does
 
-- 🎅 User registration and authentication
-- 🎁 Create and manage Secret Santa groups
-- 👥 Participant management
-- 🔀 Automatic gift assignment with exclusion rules
-- 📝 Wishlist creation with markdown support
-- 🌙 Dark mode support
-- 📱 Responsive design
+- **🎁 Dashboard**: join events, write your wish list (markdown) and, once the draw is done, see who you give a gift to and their wish list
+- **📦 Archiv**: past events, who you gave to and both wish lists
+- **👤 Profil**: change your name, email and password
+- **🛠️ Verwaltung** (admins only): create users and events, add participants, start or undo the draw
+- **✨ Extras**: Christmas Cannon, Let it draw and a music visualizer, linked from the home page
 
-## Tech Stack
+There is no registration, the admin creates every account.
 
-- **Vue 3** - Progressive JavaScript framework
-- **Vite** - Fast build tool and dev server
-- **Tailwind CSS** - Utility-first CSS framework
-- **Axios** - HTTP client for API requests
+### Spoiler-Free Admin
 
-## Getting Started
+The admin takes part like everyone else. The Verwaltung page only shows who joined an event and whether they wrote a wish list (✅ or ⏳), never who gives to whom or what is in the wish lists. The backend doesn't hand that out to admins either, so it isn't just hidden in the frontend.
 
-### Prerequisites
+## Running
 
-- Node.js (v14 or higher)
-- npm or yarn
+**On the NAS** (Docker): copy `.env.example` to `.env`, set `BACKEND_URL` to the backend's LAN address and `FRONTEND_IP` for the `br0` network, then `docker compose up -d`. GitHub Actions builds the image on every push to `main` and Watchtower updates it.
 
-### Installation
+The browser only talks to this container: nginx serves the website and forwards `/api` to `BACKEND_URL`. So only the frontend goes through Nginx Proxy Manager, the backend stays on the LAN. The API address isn't built into the image, it is read from `.env` when the container starts.
 
-1. Clone the repository
-2. Install dependencies:
-   ```bash
-   npm install
-   ```
+**Locally**: start the backend on port 8000 (`run.bat` in the backend), then:
 
-### Development
-
-Run the development server:
-```bash
+```
+npm install
 npm run dev
 ```
 
-The application will be available at `http://localhost:3000`
-
-### Build
-
-Create a production build:
-```bash
-npm run build
-```
-
-### Preview
-
-Preview the production build locally:
-```bash
-npm run preview
-```
+The website is at http://localhost:3000. The Vite dev server forwards `/api` to the backend, like nginx does in production.
 
 ## Project Structure
 
 ```
 src/
-├── components/     # Reusable Vue components
-├── composables/    # Vue composables (auth, toast)
-├── utils/          # Utility functions (API client)
-├── views/          # Page components
-├── App.vue         # Root component
-└── main.js         # Application entry point
+├── api.js            # All backend calls
+├── format.js         # Date formatting
+├── markdown.js       # Wish list rendering (sanitized with DOMPurify)
+├── main.js           # Routes and login checks
+├── App.vue           # Navbar, lights and toasts
+├── composables/      # Login state (useAuth) and toasts (useToast)
+├── components/       # Shared parts, admin/ holds the Verwaltung tabs
+└── views/            # The pages
 ```
 
-## API Integration
+Pages are only loaded when they are opened, so the home page doesn't download three.js for the music visualizer.
 
-The frontend connects to the Secret Santa backend API. Make sure the backend server is running and configure the API base URL in `src/utils/api.js`.
+## Notes
+
+- The Christmas Cannon (`public/cannon.js`) loads three.js, cannon and gsap from cdn.skypack.dev and its 3D models from assets.codepen.io. If one of those goes away, that page stops working; the rest of the site doesn't depend on them.
+- `npm audit` reports issues in Tailwind CSS 3's build tools. They only matter when building, nothing of it ends up in the website. Fixing them means moving to Tailwind 4.

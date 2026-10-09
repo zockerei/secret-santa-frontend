@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
       <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-2">Verwaltung</h1>
       <p class="text-sm text-gray-600 dark:text-gray-400 mb-8">
         Hier siehst du, wer mitmacht und wer schon eine Wunschliste hat. Wer wen beschenkt und was in

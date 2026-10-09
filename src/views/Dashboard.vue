@@ -1,6 +1,6 @@
 <template>
   <div class="page">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-16 pb-8">
       <h1 class="text-3xl font-bold text-gray-900 dark:text-white mb-8">Hallo {{ user?.name }}!</h1>
 
       <TabBar v-model="activeTab" :tabs="tabs" />

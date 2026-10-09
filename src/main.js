@@ -13,7 +13,7 @@ const routes = [
   { path: '/dashboard', name: 'Dashboard', component: () => import('./views/Dashboard.vue'), meta: { requiresAuth: true } },
   { path: '/admin', name: 'Admin', component: () => import('./views/Admin.vue'), meta: { requiresAuth: true, requiresAdmin: true } },
   { path: '/nonogramm', name: 'Nonogram', component: () => import('./views/Nonogram.vue') },
-  { path: '/christmas-cannon', name: 'ChristmasCannon', component: () => import('./views/ChristmasCannon.vue') },
+  { path: '/christmas-cannon', name: 'ChristmasCannon', component: () => import('./views/ChristmasCannon.vue'), meta: { hideLights: true } },
   { path: '/christmas-music', name: 'ChristmasMusic', component: () => import('./views/ChristmasMusic.vue') },
   { path: '/:pathMatch(.*)*', redirect: '/' }
 ]

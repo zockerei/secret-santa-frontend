@@ -116,7 +116,7 @@
       </div>
 
       <!-- Christmas Lights hanging from navbar -->
-      <ul class="lightrope" aria-hidden="true">
+      <ul v-if="!route.meta.hideLights" class="lightrope" aria-hidden="true">
         <li v-for="n in 50" :key="n"></li>
       </ul>
     </nav>
@@ -148,11 +148,12 @@
 
 <script setup>
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useAuth } from './composables/useAuth'
 import { useToast } from './composables/useToast'
 import DarkModeToggle from './components/DarkModeToggle.vue'
 
+const route = useRoute()
 const router = useRouter()
 const { user, isAuthenticated, isAdmin, logout } = useAuth()
 const { toasts, showToast } = useToast()
